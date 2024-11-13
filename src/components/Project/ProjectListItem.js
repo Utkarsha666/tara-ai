@@ -3,24 +3,21 @@ import { Box, Typography } from "@mui/material";
 import {
   StyledCard,
   StyledCardContent,
-  ProjectName, // Reintroduced for project title
+  ProjectName,
   Status,
   Label,
-  Item,
-  List,
+  ObjectiveTag,
   DividerStyled,
 } from "../../styles/Project/ProjectListItemStyle";
 
 const ProjectListItem = ({ project, onClick }) => {
   const handleClick = () => {
-    console.log("Project clicked:", project.id); // Log the clicked project ID
+    console.log("Project clicked:", project.id);
     onClick();
   };
 
   return (
     <StyledCard onClick={handleClick}>
-      {" "}
-      {/* Add onClick handler here */}
       <StyledCardContent>
         {/* Project Title */}
         <ProjectName variant="h6">{project.projectName}</ProjectName>
@@ -36,43 +33,28 @@ const ProjectListItem = ({ project, onClick }) => {
         <DividerStyled />
 
         {/* Project Dates and Budget */}
-        <Box display="flex" justifyContent="space-between" mb={3}>
+        <Box display="flex" justifyContent="space-between" mb={1}>
           <Typography variant="body2">
             Start Date: {project.startDate}
           </Typography>
           <Typography variant="body2">End Date: {project.endDate}</Typography>
         </Box>
-        <Box display="flex" justifyContent="space-between" mb={3}>
+        <Box display="flex" justifyContent="space-between" mb={1}>
           <Typography variant="body2">Budget: ${project.budget}</Typography>
         </Box>
 
         <DividerStyled />
 
-        {/* Locations */}
-        {project.location && project.location.length > 0 && (
-          <Box mt={3}>
-            <Label variant="body2">Locations:</Label>
-            <List>
-              {project.location.map((loc, index) => (
-                <Item key={index}>
-                  <Typography variant="body2">{loc}</Typography>
-                </Item>
-              ))}
-            </List>
-          </Box>
-        )}
-
         {/* Objectives */}
         {project.objectives && project.objectives.length > 0 && (
-          <Box mt={3}>
+          <Box>
             <Label variant="body2">Objectives:</Label>
-            <List>
+            <Box mt={1}>
+              {/* Display objectives as custom styled Chips */}
               {project.objectives.map((objective, index) => (
-                <Item key={index}>
-                  <Typography variant="body2">{objective}</Typography>
-                </Item>
+                <ObjectiveTag key={index} label={objective} />
               ))}
-            </List>
+            </Box>
           </Box>
         )}
       </StyledCardContent>

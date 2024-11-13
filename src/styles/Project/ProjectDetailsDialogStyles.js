@@ -17,19 +17,19 @@ export const DialogWrapper = styled(Box)(({ theme }) => ({
   boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.1)",
   padding: theme.spacing(3),
   overflowY: "auto",
-  maxHeight: "80vh", // Prevents overflow of dialog content
+  maxHeight: "80vh",
 }));
 
 // Dialog Title
 export const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
   fontSize: "1.6rem",
   fontWeight: 700,
-  color: "#2E3B4E", // Darker shade for a professional look
-  backgroundColor: "#F1F8FF", // Light blue background to indicate a header
+  color: "#2E3B4E",
+  backgroundColor: "#F1F8FF",
   padding: theme.spacing(2, 3),
   borderRadius: "12px 12px 0 0",
   textAlign: "center",
-  borderBottom: "1px solid #dce2e7", // Adds separation from content
+  borderBottom: "1px solid #dce2e7",
 }));
 
 // Dialog Content
@@ -70,7 +70,7 @@ export const StatusText = styled(Typography)(({ theme, statusColor }) => ({
 }));
 
 // Chip style for locations
-export const LocationChip = styled(Chip)(({ theme }) => ({
+export const ChipTag = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
   backgroundColor: "#E3F2FD", // Light blue chip for locations
   fontWeight: 600,
@@ -93,19 +93,19 @@ export const TeamMemberLink = styled("a")({
 // Dialog Actions (buttons)
 export const DialogActionsStyled = styled(DialogActions)(({ theme }) => ({
   padding: theme.spacing(2, 3),
-  borderTop: "1px solid #dce2e7", // Subtle separation between content and actions
+  borderTop: "1px solid #dce2e7",
   justifyContent: "center",
 }));
 
 // Styled Button (for custom 'Close' button)
 export const StyledButton = styled(Button)(({ theme }) => ({
-  background: "#1E88E5", // A calm blue button (suitable for an NGO context)
+  background: "#1E88E5",
   color: "#ffffff",
   fontWeight: 600,
   padding: theme.spacing(1, 3),
   borderRadius: "20px",
   textTransform: "none",
   "&:hover": {
-    background: "#1565C0", // Darker shade on hover
+    background: "#1565C0",
   },
 }));

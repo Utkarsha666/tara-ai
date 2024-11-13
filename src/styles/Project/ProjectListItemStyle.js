@@ -1,11 +1,17 @@
-// styles/Project/ProjectListItemStyle.js
 import { styled } from "@mui/system";
-import { Card, CardContent, Typography, Box, Divider } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Divider,
+  Chip,
+} from "@mui/material";
 
 // Full Width Styled Card
 export const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
-  borderRadius: 12,
+  borderRadius: 20,
   boxShadow: theme.shadows[5],
   borderLeft: `6px solid ${theme.palette.primary.main}`,
   backgroundColor: theme.palette.background.paper,
@@ -14,7 +20,7 @@ export const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   "&:hover": {
-    boxShadow: theme.shadows[8],
+    boxShadow: theme.shadows[12],
     cursor: "pointer",
   },
 }));
@@ -53,26 +59,23 @@ export const Status = styled(Typography)(({ theme, statusColor }) => ({
 export const Label = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
   color: theme.palette.text.primary,
-  marginTop: theme.spacing(1),
+  marginTop: theme.spacing(0),
+  marginBottom: theme.spacing(0),
 }));
 
-// List and List Item Styling
-export const Item = styled("li")(({ theme }) => ({
-  marginLeft: theme.spacing(1),
-  fontSize: "1rem",
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "space-between",
-}));
-
-export const List = styled("ul")(({ theme }) => ({
-  paddingLeft: theme.spacing(0),
-  listStyleType: "none",
-  marginBottom: theme.spacing(2),
-  paddingTop: theme.spacing(0),
+// Styled Chip for Objectives (Tags)
+export const ObjectiveTag = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.5),
+  backgroundColor: theme.palette.grey[200], // Light background for tags
+  color: theme.palette.text.primary, // Text color for tags
+  fontWeight: 600,
+  borderRadius: 16, // Rounded corners
+  "&:hover": {
+    backgroundColor: theme.palette.grey[300], // Darker on hover
+  },
 }));
 
 // Divider Styling
 export const DividerStyled = styled(Divider)(({ theme }) => ({
-  margin: `${theme.spacing(1)} 0`,
+  margin: `${theme.spacing(0)} 0`,
 }));

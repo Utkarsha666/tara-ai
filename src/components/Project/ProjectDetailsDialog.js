@@ -7,7 +7,7 @@ import {
 import GradientButton from "../common/Button";
 import CircularLoading from "../common/CircularLoading";
 import UserProfileDialog from "../common/UserProfileDialog";
-import EditIcon from "@mui/icons-material/Edit"; // Import the Edit icon
+import EditIcon from "@mui/icons-material/Edit";
 import ProjectFormDialog from "./ProjectFormDialog";
 
 import {
@@ -17,10 +17,10 @@ import {
   SectionTitle,
   SectionText,
   StatusText,
-  LocationChip,
+  ChipTag,
   TeamMemberLink,
   DialogActionsStyled,
-} from "../../styles/Project/ProjectDetailsDialogStyles"; // Import styles
+} from "../../styles/Project/ProjectDetailsDialogStyles";
 
 const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
   const [projectDetails, setProjectDetails] = useState(null);
@@ -40,7 +40,7 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
       } catch (error) {
         console.error("Error fetching project details:", error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
@@ -59,7 +59,7 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
   };
 
   const handleCloseEditForm = () => {
-    setIsEditFormOpen(false); // Close the edit form
+    setIsEditFormOpen(false);
   };
 
   const handleSubmitEdit = async (updatedProject) => {
@@ -70,8 +70,8 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
         token,
         updatedProject
       );
-      setProjectDetails(response); // Update the project details state with the response
-      setIsEditFormOpen(false); // Close the form after successful submission
+      setProjectDetails(response);
+      setIsEditFormOpen(false);
     } catch (error) {
       console.error("Error updating project:", error);
     }
@@ -107,7 +107,7 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
                 position: "absolute",
                 top: "10px",
                 right: "10px",
-                color: "#1976d2", // Blue color for the Edit button
+                color: "#1976d2",
               }}
               onClick={handleEditClick}
             >
@@ -167,7 +167,7 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
                   <strong>Locations</strong>
                 </SectionTitle>
                 {projectDetails.location.map((loc, index) => (
-                  <LocationChip key={index} label={loc} />
+                  <ChipTag key={index} label={loc} />
                 ))}
               </Box>
             )}
@@ -177,9 +177,11 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
                 <SectionTitle>
                   <strong>Objectives</strong>
                 </SectionTitle>
-                {projectDetails.objectives.map((objective, index) => (
-                  <SectionText key={index}>- {objective}</SectionText>
-                ))}
+                <Box>
+                  {projectDetails.objectives.map((objective, index) => (
+                    <ChipTag key={index} label={objective} />
+                  ))}
+                </Box>
               </Box>
             )}
 
