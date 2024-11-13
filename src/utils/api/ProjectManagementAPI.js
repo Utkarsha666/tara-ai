@@ -19,8 +19,7 @@ export const fetchProjects = async (token) => {
     throw new Error("Failed to fetch projects");
   }
 
-  const data = await response.json();
-  return data;
+  return await response.json();
 };
 
 export const fetchProjectDetails = async (projectId, token) => {
@@ -39,8 +38,7 @@ export const fetchProjectDetails = async (projectId, token) => {
     throw new Error("Failed to fetch project details");
   }
 
-  data = await response.json();
-  return data;
+  return response.json();
 };
 
 export const updateProjectDetails = async (
