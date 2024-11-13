@@ -1,0 +1,38 @@
+/* Slider.css */
+.slider-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-card {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 10px 0;
+}
+
+.report-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.slick-slide {
+  display: flex;
+  justify-content: center;
+}
+
+.slick-list {
+  overflow: hidden;
+  height: 400px;
+}
+
+.slick-track {
+  display: flex;
+  flex-direction: column;
+}
+
+.slick-slide {
+  height: auto;
+}
