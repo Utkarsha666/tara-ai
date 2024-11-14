@@ -22,12 +22,19 @@ import {
   DialogActionsStyled,
 } from "../../styles/Project/ProjectDetailsDialogStyles";
 
+import SuccessSnackbar from "../common/SuccessSnackbar"; // Import SuccessSnackbar
+
 const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
   const [projectDetails, setProjectDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [userProfileOpen, setUserProfileOpen] = useState(false);
   const [selectedUsername, setSelectedUsername] = useState(null);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+
+  // Snackbar states
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     const getProjectDetails = async () => {
@@ -40,7 +47,7 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
       } catch (error) {
         console.error("Error fetching project details:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading
       }
     };
 
@@ -63,17 +70,31 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
   };
 
   const handleSubmitEdit = async (updatedProject) => {
-    // Make API call to update the project
     try {
       const response = await updateProjectDetails(
         projectId,
         token,
         updatedProject
       );
-      setProjectDetails(response);
-      setIsEditFormOpen(false);
+      setProjectDetails(response); // Update the project details state with the response
+      setIsEditFormOpen(false); // Close the form after successful submission
+
+      // Show success snackbar
+      setSnackbarMessage("Project updated successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
     } catch (error) {
       console.error("Error updating project:", error);
+
+      // Assuming the API provides an error message in the response body (error.response.data.message)
+      const errorMessage =
+        error.response?.data?.message ||
+        "Either you are not an team member or the username is invalid";
+
+      // Show error snackbar with the message from the API
+      setSnackbarMessage(errorMessage);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -229,6 +250,14 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
           isEditing={true}
         />
       )}
+
+      {/* SuccessSnackbar */}
+      <SuccessSnackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
+      />
     </>
   );
 };

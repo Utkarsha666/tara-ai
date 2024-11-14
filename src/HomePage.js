@@ -133,8 +133,9 @@ const HomePage = () => {
             Tara, an AI-powered climate advocate, uses the latest trends and
             data to support gender-responsive climate action in Nepal. With an
             easy-to-use dashboard, interactive chatbot, and community hub, Tara
-            enables users to collaborate, track impact, and create sustainable
-            solutions for building resilient, climate-friendly communities.
+            enables users to collaborate, manage projects, track impact, and
+            create sustainable solutions for building resilient,
+            climate-friendly communities.
           </Typography>
         </Box>
 

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Line, Bar } from "react-chartjs-2";
 import { Box, Typography } from "@mui/material";
-import CircularLoading from "./components/common/CircularLoading";
+import CircularLoading from "./components/common/CircularLoading"; // Import CircularLoading component
+import { AuthContext } from "./AuthContext"; // Import the AuthContext
 
 import {
   Chart as ChartJS,
@@ -42,6 +43,9 @@ import {
 } from "./styles/ImpactPoints/ImpactPointsStyles";
 
 const ImpactPoints = () => {
+  // Use the AuthContext to get the token
+  const { token } = useContext(AuthContext);
+
   // State to store the total projects and loading state
   const [totalProjects, setTotalProjects] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -56,8 +60,7 @@ const ImpactPoints = () => {
             method: "GET",
             headers: {
               Accept: "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1dGthcnNoYSIsImV4cCI6MTczMTU4NTcyNn0.EkBh96ggG8wSsTRHHC7RWLXT0EdAAZmslnQOo0FHQBU",
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -75,24 +78,29 @@ const ImpactPoints = () => {
       }
     };
 
-    fetchTotalProjects();
-  }, []);
+    if (token) {
+      fetchTotalProjects();
+    } else {
+      setLoading(false);
+    }
+  }, [token]); // Run effect whenever the token changes
 
   // Mock Data for the Charts (unchanged)
-  const capacityBuildingData = [10, 15, 20, 25, 30, 35, 40];
-  const engagementScoreData = [5, 12, 18, 25, 30, 28, 33];
+  const capacityBuildingData = [0, 0, 0, 0, 0, 0, 1];
+  const engagementScoreData = [0, 0, 0, 0, 0, 0, 1];
 
   // Beneficiaries Served Data
-  const beneficiariesData = [15, 25, 35, 30, 50];
-  const climateBeneficiariesData = [5, 10, 20, 15, 25];
+  const beneficiariesData = [0, 0, 0, 0, 1];
+  const climateBeneficiariesData = [0, 0, 0, 0, 1];
 
   // Impact Scores by Project Data
-  const impactScores = [70, 65, 70, 50];
+  const impactScores = [1, 1, 0, 0, 0];
   const impactProjects = [
-    "Women Empowerment",
-    "Climate Resilience",
-    "Education",
+    "Gender",
+    "Climate",
+    "Agriculture",
     "Health",
+    "Education",
   ];
 
   return (
@@ -143,7 +151,7 @@ const ImpactPoints = () => {
                   variant="h4"
                   sx={{ fontWeight: 700, color: "#fff" }}
                 >
-                  0 {/* Set the value to 0 for now */}
+                  1 {/* Set the value to 0 for now */}
                 </Typography>
               </CapacityBuildingCard>
             </BoxItem>

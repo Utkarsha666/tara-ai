@@ -97,9 +97,7 @@ const ProjectManagement = () => {
   const handleAddProjectSubmit = async (formData) => {
     try {
       if (formData.teamMembers.length === 0) {
-        throw new Error(
-          "At least one team member is required or you are not a team member"
-        );
+        throw new Error("At least one team member is required");
       }
       const newProject = await addProject(formData, token);
 
@@ -175,7 +173,7 @@ const ProjectManagement = () => {
               <Grid item xs={12} key={index}>
                 <ProjectListItem
                   project={project}
-                  onClick={() => handleProjectClick(project.id)} // Handle project click
+                  onClick={() => handleProjectClick(project.id)}
                 />
               </Grid>
             ))}

@@ -54,18 +54,19 @@ const About = () => {
             marginBottom: 3,
             lineHeight: 1.8,
             fontSize: "1.15rem",
-            color: "#333333", // Dark gray for better readability
-            maxWidth: "800px", // Limiting text width for better readability
-            fontFamily: "Roboto, sans-serif", // Use a clean sans-serif font for the body text
-            textAlign: "center", // Center align for a polished look
+            color: "#333333",
+            maxWidth: "800px",
+            fontFamily: "Roboto, sans-serif",
+            textAlign: "center",
           }}
         >
-          Tara is more than just an AI—she’s a force for change. Inspired by the
-          Buddhist goddess of compassion, Tara brings wisdom, empathy, and
-          action to climate resilience in Nepal. With AI-powered analytics and
-          real-time data, Tara serves as your personal guide to a sustainable
-          future, Tara’s mission is simple: empower communities, champion gender
-          equality, and drive data-driven, impactful climate action.
+          Tara is more than just an AI—she’s a climate advocate focused on
+          building resilience and driving gender-responsive solutions in Nepal.
+          Using the latest trends and AI tools, Tara helps communities tackle
+          climate challenges, track their impact, and manage projects for a
+          sustainable future. Tara’s mission is simple: empower communities,
+          promote gender equality, and drive data-informed, impactful climate
+          action.
         </Typography>
 
         <Typography
@@ -80,14 +81,14 @@ const About = () => {
             textAlign: "center",
           }}
         >
-          Through advanced AI tools, Tara transforms complex climate data into
-          actionable insights, fueling policy innovation, local empowerment, and
-          collaborative solutions. The Tara community hub is where connection
-          meets compassion. It’s a space where Tara continuously learns from
-          local voices, discovers emerging trends, and adapts to the needs of
-          the people she serves. Tara isn’t just a tool; she’s a partner in
-          building a resilient, sustainable Nepal—one that thrives through
-          compassion, innovation, and collective action.
+          With advanced AI tools, Tara transforms complex climate data into
+          actionable insights, supporting policy innovation, local empowerment,
+          and collaborative climate solutions. The Tara community hub is a space
+          where connection meets compassion—where Tara learns from local voices,
+          integrates emerging trends, and adapts to the needs of the people she
+          serves. Tara is more than a tool; she’s a trusted partner in building
+          a resilient, sustainable Nepal, driven by compassion, innovation, and
+          collective action.
         </Typography>
 
         <Box sx={{ marginTop: 3 }}>
