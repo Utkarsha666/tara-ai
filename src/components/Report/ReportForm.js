@@ -87,21 +87,10 @@ const ReportForm = ({
   setTopic,
   maxAnalysts,
   setMaxAnalysts,
-  feedback,
-  setFeedback,
   handleGenerateReport,
   loadingReportGeneration,
   loadingReports,
 }) => {
-  const [loadingMessage, setLoadingMessage] = useState("");
-
-  const handleReportGeneration = () => {
-    setLoadingMessage(
-      "Generating Report... It may take some time... Won't work on Firefox"
-    );
-    handleGenerateReport();
-  };
-
   return (
     <Box
       sx={{
@@ -141,19 +130,9 @@ const ReportForm = ({
         inputProps={{ min: 1 }}
       />
 
-      <TextField
-        label="Feedback"
-        value={feedback}
-        onChange={(e) => setFeedback(e.target.value)}
-        fullWidth
-        margin="normal"
-        multiline
-        rows={4}
-      />
-
       {/* Use the GradientButton here */}
       <GradientButton
-        onClick={handleReportGeneration} // Trigger report generation
+        onClick={handleGenerateReport} // Trigger report generation
         disabled={loadingReportGeneration || loadingReports} // Disable when loading
       >
         Generate Report
@@ -175,7 +154,7 @@ const ReportForm = ({
             variant="body2"
             sx={{ marginTop: 2, textAlign: "center" }}
           >
-            {loadingMessage}
+            Generating Report... It may take some time.
           </Typography>
         </Box>
       )}

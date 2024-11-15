@@ -1,6 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
-import { fetchReports, generateReport } from "./utils/api/ReportAPI";
+import {
+  fetchReports,
+  generateReport,
+  submitFeedback,
+} from "./utils/api/ReportAPI";
 import ReportForm from "./components/Report/ReportForm";
 import ReportItem from "./components/Report/ReportItem";
 import Alert from "./components/common/Alert";
@@ -13,24 +17,32 @@ import {
   Typography,
 } from "@mui/material";
 import ReportDialog from "./components/common/ReportDialog";
+import FeedbackDialog from "./components/Report/FeedbackDialog";
+import LoadingDialog from "./components/common/LoadingDialog";
 
 const Report = () => {
   const { token } = useContext(AuthContext);
   const [reports, setReports] = useState([]);
   const [loadingReports, setLoadingReports] = useState(false);
   const [loadingReportGeneration, setLoadingReportGeneration] = useState(false);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [topic, setTopic] = useState(
     "The Role of Nepal's Indigenous Communities in Climate Action and Conservation"
   );
   const [maxAnalysts, setMaxAnalysts] = useState(1);
-  const [feedback, setFeedback] = useState("Add Executive Director of NGO");
+  const [feedback, setFeedback] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  // Dialog state
+  // Dialog states
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
   const [generatedReport, setGeneratedReport] = useState(null);
+  const [analystsData, setAnalystsData] = useState([]);
+  const [message, setMessage] = useState("");
+  const [threadId, setThreadId] = useState(null);
+  const [loadingDialogOpen, setLoadingDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchReportsData = async () => {
@@ -52,21 +64,44 @@ const Report = () => {
   const handleGenerateReport = async () => {
     setLoadingReportGeneration(true);
     try {
-      const newReport = await generateReport(
-        topic,
-        maxAnalysts,
-        feedback,
-        token
-      );
-      setReports((prevReports) => [newReport, ...prevReports]); // Insert at the top
-      setGeneratedReport(newReport); // Save the generated report
-      setDialogOpen(true); // Open the dialog
-      setCurrentPage(1); // Reset to first page when new report is added
+      const tempReport = await generateReport(topic, maxAnalysts, token);
+      setAnalystsData(tempReport.analysts);
+      setMessage(tempReport.message); // The message asking for feedback
+      setThreadId(tempReport.thread_id); // Save thread_id
+      setFeedbackDialogOpen(true); // Open feedback dialog
     } catch (error) {
       setErrorMessage(error.message);
       setOpenSnackbar(true);
     } finally {
       setLoadingReportGeneration(false);
+    }
+  };
+
+  const handleSubmitFeedback = async (feedbackText) => {
+    setLoadingFeedback(true); // Set loading state to true while submitting feedback
+    setFeedbackDialogOpen(false); // Close the feedback dialog
+
+    // Open the loading dialog
+    setLoadingDialogOpen(true);
+
+    try {
+      // Submit feedback to the server
+      const response = await submitFeedback(threadId, feedbackText, token);
+
+      // Insert the new report at the top of the reports list
+      setReports((prevReports) => [response, ...prevReports]);
+
+      setGeneratedReport(response); // Set the final report response
+
+      // Close the loading dialog and show the report dialog
+      setLoadingDialogOpen(false);
+      setDialogOpen(true); // Open the report dialog with the final report
+    } catch (error) {
+      setErrorMessage(error.message);
+      setOpenSnackbar(true);
+
+      // Close the loading dialog in case of an error
+      setLoadingDialogOpen(false);
     }
   };
 
@@ -80,7 +115,7 @@ const Report = () => {
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-    setGeneratedReport(null); // Clear the report data when closing
+    setGeneratedReport(null);
   };
 
   return (
@@ -94,8 +129,6 @@ const Report = () => {
         setTopic={setTopic}
         maxAnalysts={maxAnalysts}
         setMaxAnalysts={setMaxAnalysts}
-        feedback={feedback}
-        setFeedback={setFeedback}
         handleGenerateReport={handleGenerateReport}
         loadingReportGeneration={loadingReportGeneration}
         loadingReports={loadingReports}
@@ -126,11 +159,7 @@ const Report = () => {
         }}
       >
         {currentReports.map((reportData) => (
-          <ReportItem
-            key={reportData._id}
-            reportData={reportData}
-            handleOpenDialog={() => {}}
-          />
+          <ReportItem key={reportData._id} reportData={reportData} />
         ))}
       </Box>
 
@@ -149,6 +178,21 @@ const Report = () => {
           {errorMessage}
         </Alert>
       </Snackbar>
+
+      {/* Loading Dialog with CircularLoading */}
+      <LoadingDialog
+        open={loadingDialogOpen}
+        message="Generating Report, It will take some time, won't work on Firefox"
+      />
+
+      {/* Feedback Dialog */}
+      <FeedbackDialog
+        open={feedbackDialogOpen}
+        onClose={() => setFeedbackDialogOpen(false)}
+        analysts={analystsData}
+        message={message}
+        onSubmitFeedback={handleSubmitFeedback}
+      />
 
       {/* Report Dialog */}
       {generatedReport && (

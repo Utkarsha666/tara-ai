@@ -20,11 +20,11 @@ export const fetchReports = async (token) => {
   );
 };
 
-export const generateReport = async (topic, maxAnalysts, feedback, token) => {
+export const generateReport = async (topic, maxAnalysts, token) => {
   const response = await fetch(
     `https://climate-and-gender-ai.onrender.com/report/generate-report?topic=${encodeURIComponent(
       topic
-    )}&max_analysts=${maxAnalysts}&feedback=${encodeURIComponent(feedback)}`,
+    )}&max_analysts=${maxAnalysts}`,
     {
       method: "GET",
       headers: {
@@ -36,6 +36,28 @@ export const generateReport = async (topic, maxAnalysts, feedback, token) => {
 
   if (!response.ok) {
     throw new Error("Failed to generate report");
+  }
+
+  return await response.json();
+};
+
+export const submitFeedback = async (threadId, feedback, token) => {
+  const response = await fetch(
+    `https://climate-and-gender-ai.onrender.com/report/submit-feedback?thread_id=${encodeURIComponent(
+      threadId
+    )}&feedback=${encodeURIComponent(feedback)}`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: "",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to submit feedback");
   }
 
   return await response.json();
