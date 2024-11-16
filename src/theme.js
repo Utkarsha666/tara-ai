@@ -1,4 +1,3 @@
-// theme.js
 import { createTheme } from "@mui/material/styles";
 
 // Define the gradient color for the theme
@@ -18,7 +17,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          background: gradient,
+          background: gradient, // Apply gradient to AppBar
           backdropFilter: "blur(10px)",
           boxShadow: "none",
         },
@@ -27,7 +26,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          background: gradient,
+          background: gradient, // Apply gradient to Button
           borderRadius: "8px",
           "&:hover": {
             background: "linear-gradient(135deg, #003c5b 0%, #005f7f 100%)",
@@ -52,9 +51,11 @@ const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "#003c5b",
+          backgroundColor: "white", // Set background to white
+          color: "#003c5b", // Set text color to dark (primary color for contrast)
           "&:hover": {
-            backgroundColor: "#005b7f",
+            backgroundColor: "#005f7f", // Hover background in primary color
+            color: "white", // Ensure the text is white on hover for visibility
           },
         },
       },

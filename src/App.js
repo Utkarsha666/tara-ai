@@ -12,9 +12,13 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
+  IconButton,
+  Badge,
+  Typography,
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
-import { AuthContext } from "./AuthContext"; // AuthContext for login state
+import { AuthContext } from "./AuthContext";
+import NotificationDropdown from "./components/common/NotificationDropdown";
 
 // Import custom theme
 import theme from "./theme";
@@ -30,6 +34,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 // Import pages
 import HomePage from "./HomePage";
@@ -47,10 +52,14 @@ import ProjectManagement from "./ProjectManagement";
 import appStyles from "./styles/AppStyles";
 
 const App = () => {
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { isLoggedIn, logout, id: userId } = useContext(AuthContext);
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const openManageMenu = Boolean(anchorEl);
+  const openNotificationMenu = Boolean(notificationAnchorEl);
+
+  const [unreadNotifications, setUnreadNotifications] = useState(5);
 
   const handleManageMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -60,8 +69,15 @@ const App = () => {
     setAnchorEl(null);
   };
 
+  const handleNotificationMenuClick = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
+  const handleNotificationMenuClose = () => {
+    setNotificationAnchorEl(null);
+  };
+
   return (
-    // Wrap the entire app in the ThemeProvider to apply the custom theme globally
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
         {/* AppBar */}
@@ -96,6 +112,27 @@ const App = () => {
                 <Link to="/profile">
                   <AccountCircleIcon sx={appStyles.accountIcon} />
                 </Link>
+              </Box>
+            )}
+            {isLoggedIn && (
+              <Box sx={{ marginLeft: 2 }}>
+                <IconButton
+                  color="inherit"
+                  onClick={handleNotificationMenuClick}
+                >
+                  {/* Show red dot if there are unread notifications */}
+                  <Badge
+                    color="error"
+                    variant={unreadNotifications > 0 ? "dot" : "standard"}
+                  >
+                    <NotificationsIcon />
+                  </Badge>
+                </IconButton>
+                <NotificationDropdown
+                  anchorEl={notificationAnchorEl}
+                  onClose={handleNotificationMenuClose}
+                  userId={userId}
+                />
               </Box>
             )}
           </Toolbar>
@@ -188,42 +225,22 @@ const App = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route
                 path="/dashboard"
-                element={
-                  isLoggedIn ? (
-                    <Dashboard />
-                  ) : (
-                    <Navigate to="/login" state={{ from: "/dashboard" }} />
-                  )
-                }
+                element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
               />
               <Route
                 path="/report"
-                element={
-                  isLoggedIn ? (
-                    <Report />
-                  ) : (
-                    <Navigate to="/login" state={{ from: "/report" }} />
-                  )
-                }
+                element={isLoggedIn ? <Report /> : <Navigate to="/login" />}
               />
               <Route
                 path="/impact-points"
                 element={
-                  isLoggedIn ? (
-                    <ImpactPoints />
-                  ) : (
-                    <Navigate to="/login" state={{ from: "/impact-points" }} />
-                  )
+                  isLoggedIn ? <ImpactPoints /> : <Navigate to="/login" />
                 }
               />
               <Route
                 path="/community-hub"
                 element={
-                  isLoggedIn ? (
-                    <CommunityHub />
-                  ) : (
-                    <Navigate to="/login" state={{ from: "/community-hub" }} />
-                  )
+                  isLoggedIn ? <CommunityHub /> : <Navigate to="/login" />
                 }
               />
               <Route path="/maps" element={<Maps />} />

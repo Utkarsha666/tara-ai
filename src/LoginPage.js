@@ -7,6 +7,7 @@ import InfoIcon from "@mui/icons-material/Info";
 
 // Import the reusable GradientButton component
 import GradientButton from "./components/common/Button";
+import { fetchUserData } from "./utils/api/ProfilePageAPI"; // Import the fetchUserData function
 
 const Alert = React.forwardRef((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -43,6 +44,7 @@ const LoginPage = () => {
         setServerInitializing(true);
       }, 12000);
 
+      // Step 1: Request the access token
       const response = await fetch(
         "https://climate-and-gender-ai.onrender.com/auth/token",
         {
@@ -63,7 +65,16 @@ const LoginPage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        login(data.access_token, credentials.username);
+        const accessToken = data.access_token; // The access token received
+
+        // Step 2: Use the access token to fetch user details (including id)
+        const userDetails = await fetchUserData(accessToken); // Get user data using the token
+
+        // Now that you have the user data (id, username, etc.), update the context
+        login(accessToken, {
+          username: credentials.username,
+          id: userDetails.id,
+        });
 
         const redirectPath = location.state?.from || "/";
         navigate(redirectPath);
