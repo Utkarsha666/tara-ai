@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Menu, MenuItem, Typography, Divider, Box } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { blue, grey } from "@mui/material/colors";
-
-// Import the notification fetching API utility
 import { fetchNotifications } from "../../utils/api/NotificationAPI";
 
-const NotificationDropdown = ({ anchorEl, onClose, userId }) => {
+const NotificationDropdown = ({
+  anchorEl,
+  onClose,
+  userId,
+  onNotificationUpdate,
+  onNotificationClick, // New prop to handle notification click
+}) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -14,13 +18,20 @@ const NotificationDropdown = ({ anchorEl, onClose, userId }) => {
       if (userId) {
         const notificationsData = await fetchNotifications(userId);
         setNotifications(notificationsData);
+        onNotificationUpdate(notificationsData.length > 0);
       }
     };
 
     getNotifications();
-  }, [userId]);
+  }, [userId, onNotificationUpdate]);
 
   const hasNotifications = notifications.length > 0;
+
+  const handleNotificationClick = (notification) => {
+    // Pass the notification details to the parent to fetch the post
+    onNotificationClick(notification);
+    onClose(); // Close the dropdown menu when a notification is clicked
+  };
 
   return (
     <Menu
@@ -63,9 +74,10 @@ const NotificationDropdown = ({ anchorEl, onClose, userId }) => {
               <MenuItem
                 key={index}
                 sx={{ padding: 1, display: "flex", flexDirection: "column" }}
+                onClick={() => handleNotificationClick(notification)} // Handle click
               >
                 <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                  {notification.tagged_by} tagged you.
+                  {notification.tagged_by} has tagged you.
                 </Typography>
                 <Typography variant="body2" color={grey[600]}>
                   {notification.message ||

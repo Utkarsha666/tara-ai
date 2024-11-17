@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { Route, Routes, Link, Navigate, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -50,16 +50,30 @@ import ProjectManagement from "./ProjectManagement";
 
 // Import external styles
 import appStyles from "./styles/AppStyles";
+import { fetchPostById } from "./utils/api/SidebarAPI";
+// Import NotificationSidebar
+import NotificationSidebar from "./components/common/NotificationSidebar";
 
 const App = () => {
-  const { isLoggedIn, logout, id: userId } = useContext(AuthContext);
+  const {
+    isLoggedIn,
+    logout,
+    id: userId,
+    username,
+    token,
+  } = useContext(AuthContext);
   const location = useLocation();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null); // Manage manage menu
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const openManageMenu = Boolean(anchorEl);
   const openNotificationMenu = Boolean(notificationAnchorEl);
+  const [sidebarPost, setSidebarPost] = useState(null);
+  const [error, setError] = useState(null); // Define setError using useState
 
-  const [unreadNotifications, setUnreadNotifications] = useState(5);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  // Reference to the notification sidebar
+  const notificationSidebarRef = useRef(null);
 
   const handleManageMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -76,6 +90,37 @@ const App = () => {
   const handleNotificationMenuClose = () => {
     setNotificationAnchorEl(null);
   };
+
+  // Function to handle notification updates
+  const handleNotificationUpdate = (hasNotifications) => {
+    setUnreadNotifications(hasNotifications ? 1 : 0);
+  };
+
+  const handleNotificationClick = async (notification) => {
+    // Fetch the post using the notification's post ID
+    const postId = notification.post_id;
+    const postData = await fetchPostById(postId, token);
+    setSidebarPost(postData); // Update the state to show the post in the sidebar
+  };
+
+  // Close the notification sidebar if clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationSidebarRef.current &&
+        !notificationSidebarRef.current.contains(event.target) &&
+        !event.target.closest("#notification-button") // Make sure to not close when clicking the notification button
+      ) {
+        setSidebarPost(null); // Close the sidebar when clicking outside
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -108,30 +153,33 @@ const App = () => {
               </Button>
             )}
             {isLoggedIn && (
-              <Box sx={{ marginLeft: 2 }}>
+              <Box sx={{ marginLeft: 1 }}>
                 <Link to="/profile">
                   <AccountCircleIcon sx={appStyles.accountIcon} />
                 </Link>
               </Box>
             )}
             {isLoggedIn && (
-              <Box sx={{ marginLeft: 2 }}>
+              <Box>
                 <IconButton
+                  id="notification-button"
                   color="inherit"
                   onClick={handleNotificationMenuClick}
                 >
-                  {/* Show red dot if there are unread notifications */}
                   <Badge
                     color="error"
                     variant={unreadNotifications > 0 ? "dot" : "standard"}
+                    invisible={unreadNotifications === 0}
                   >
-                    <NotificationsIcon />
+                    <NotificationsIcon sx={{ fontSize: "30px" }} />
                   </Badge>
                 </IconButton>
                 <NotificationDropdown
                   anchorEl={notificationAnchorEl}
                   onClose={handleNotificationMenuClose}
                   userId={userId}
+                  onNotificationUpdate={handleNotificationUpdate}
+                  onNotificationClick={handleNotificationClick}
                 />
               </Box>
             )}
@@ -259,6 +307,15 @@ const App = () => {
               />
             </Routes>
           </Container>
+
+          {/* Notification Sidebar */}
+          <NotificationSidebar
+            sidebarPost={sidebarPost}
+            notificationSidebarRef={notificationSidebarRef}
+            token={token}
+            username={username}
+            setError={setError}
+          />
         </Box>
       </Box>
     </ThemeProvider>
