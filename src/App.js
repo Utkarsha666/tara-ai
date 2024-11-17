@@ -50,7 +50,7 @@ import ProjectManagement from "./ProjectManagement";
 
 // Import external styles
 import appStyles from "./styles/AppStyles";
-import { fetchPostById } from "./utils/api/SidebarAPI";
+import { fetchPostById, fetchCommentById } from "./utils/api/SidebarAPI";
 // Import NotificationSidebar
 import NotificationSidebar from "./components/common/NotificationSidebar";
 
@@ -69,6 +69,7 @@ const App = () => {
   const openNotificationMenu = Boolean(notificationAnchorEl);
   const [sidebarPost, setSidebarPost] = useState(null);
   const [error, setError] = useState(null); // Define setError using useState
+  const [highlightedComment, setHighlightedComment] = useState(null); // State for highlighted comment
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
@@ -97,10 +98,31 @@ const App = () => {
   };
 
   const handleNotificationClick = async (notification) => {
-    // Fetch the post using the notification's post ID
-    const postId = notification.post_id;
-    const postData = await fetchPostById(postId, token);
-    setSidebarPost(postData); // Update the state to show the post in the sidebar
+    try {
+      const postId = notification.post_id;
+      const commentId = notification.comment_id;
+
+      // Fetch the post data
+      const postData = await fetchPostById(postId, token);
+
+      // Initialize commentData to null
+      let commentData = null;
+
+      // If there's a comment_id, fetch the comment data
+      if (commentId !== null) {
+        commentData = await fetchCommentById(postId, commentId, token);
+      }
+
+      // Update the sidebar to display the post
+      setSidebarPost(postData);
+
+      // Pass the comment data (if exists) to be highlighted in the PostCard component
+      setHighlightedComment(commentData || null);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // Handle the error (e.g., show an error message to the user)
+      alert("There was an error fetching the notification details.");
+    }
   };
 
   // Close the notification sidebar if clicking outside
@@ -109,9 +131,9 @@ const App = () => {
       if (
         notificationSidebarRef.current &&
         !notificationSidebarRef.current.contains(event.target) &&
-        !event.target.closest("#notification-button") // Make sure to not close when clicking the notification button
+        !event.target.closest("#notification-button")
       ) {
-        setSidebarPost(null); // Close the sidebar when clicking outside
+        setSidebarPost(null);
       }
     };
 

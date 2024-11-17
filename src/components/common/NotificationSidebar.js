@@ -1,10 +1,10 @@
-// ./components/common/NotificationSidebar.js
 import React from "react";
 import { Box, Divider } from "@mui/material";
 import PostCard from "../Community/PostCard";
 
 const NotificationSidebar = ({
   sidebarPost,
+  highlightedComment, // Pass the highlighted comment prop
   notificationSidebarRef,
   token,
   username,
@@ -36,11 +36,10 @@ const NotificationSidebar = ({
           token={token}
           setError={setError}
           username={username}
+          highlightedComment={highlightedComment} // Pass highlightedComment here
         />
 
         <Divider sx={{ marginTop: 3 }} />
-
-        {/* Optional: You could add extra content here like a close button, etc. */}
       </Box>
     )
   );

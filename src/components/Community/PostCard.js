@@ -26,7 +26,7 @@ const formatDate = (dateString) => {
   }).format(date);
 };
 
-const PostCard = ({ post, token, setError, username }) => {
+const PostCard = ({ post, token, setError, username, highlightedComment }) => {
   const [newComment, setNewComment] = useState(""); // State to hold new comment
   const [loadingComment, setLoadingComment] = useState(false); // Loading state for adding comment
   const [showAllComments, setShowAllComments] = useState(false); // State to toggle comments
@@ -137,6 +137,26 @@ const PostCard = ({ post, token, setError, username }) => {
       {/* Comments Section */}
       <CommentsSection>
         <h3>Comments</h3>
+
+        {/* Highlighted Comment */}
+        {highlightedComment && (
+          <Box
+            sx={{
+              backgroundColor: "#f0f8ff", // Light blue background to highlight
+              padding: "10px",
+              marginBottom: "20px",
+              borderRadius: "5px",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              Tagged Comment:
+            </Typography>
+            <Typography variant="body2">
+              {highlightedComment.content}
+            </Typography>
+          </Box>
+        )}
 
         {/* Render comments */}
         {commentsToShow.length === 0 ? (
