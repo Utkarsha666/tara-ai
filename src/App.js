@@ -63,13 +63,13 @@ const App = () => {
     token,
   } = useContext(AuthContext);
   const location = useLocation();
-  const [anchorEl, setAnchorEl] = useState(null); // Manage manage menu
+  const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const openManageMenu = Boolean(anchorEl);
   const openNotificationMenu = Boolean(notificationAnchorEl);
   const [sidebarPost, setSidebarPost] = useState(null);
-  const [error, setError] = useState(null); // Define setError using useState
-  const [highlightedComment, setHighlightedComment] = useState(null); // State for highlighted comment
+  const [error, setError] = useState(null);
+  const [highlightedComment, setHighlightedComment] = useState(null);
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
 
@@ -333,6 +333,7 @@ const App = () => {
           {/* Notification Sidebar */}
           <NotificationSidebar
             sidebarPost={sidebarPost}
+            highlightedComment={highlightedComment}
             notificationSidebarRef={notificationSidebarRef}
             token={token}
             username={username}
