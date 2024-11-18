@@ -159,6 +159,11 @@ const App = () => {
     };
   }, []); // Empty dependency array to only run once when the component mounts
 
+  const closeSidebar = () => {
+    setSidebarPost(null);
+    setProjectData(null);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -354,6 +359,7 @@ const App = () => {
             username={username}
             setError={setError}
             projectData={projectData}
+            closeSidebar={closeSidebar}
           />
         </Box>
       </Box>

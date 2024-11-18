@@ -77,7 +77,11 @@ const NotificationDropdown = ({
                 onClick={() => handleNotificationClick(notification)} // Handle click
               >
                 <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                  {notification.tagged_by} has tagged you.
+                  {notification.notification_type === "TAG"
+                    ? `${notification.tagged_by} has mentioned you.`
+                    : notification.notification_type === "PROJECT"
+                    ? `${notification.tagged_by} has assigned you a project.`
+                    : "You have a new notification."}
                 </Typography>
                 <Typography variant="body2" color={grey[600]}>
                   {notification.message ||
@@ -85,6 +89,7 @@ const NotificationDropdown = ({
                 </Typography>
               </MenuItem>
             ))}
+
             {/* Divider to separate the notifications from the footer */}
             <Divider sx={{ marginY: 1 }} />
             <MenuItem

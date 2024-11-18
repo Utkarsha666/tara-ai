@@ -1,17 +1,20 @@
 import React from "react";
-import { Box, Divider, Typography } from "@mui/material";
-import PostCard from "../Community/PostCard"; // Ensure PostCard is imported correctly
+import { Box, Divider, Typography, IconButton } from "@mui/material";
+import PostCard from "../Community/PostCard";
+import ProjectListItem from "../Project/ProjectListItem";
+import CloseIcon from "@mui/icons-material/Close"; // Add a close icon for better UX
 
 const NotificationSidebar = ({
   sidebarPost,
-  highlightedComment, // Pass the highlighted comment prop
+  highlightedComment,
   notificationSidebarRef,
   token,
   username,
   setError,
-  projectData, // Pass projectData to render project details
+  projectData,
+  closeSidebar, // Add a close function as a prop to improve UX
 }) => {
-  if (!sidebarPost && !projectData) return null; // If neither post nor project is provided, render nothing.
+  if (!sidebarPost && !projectData) return null;
 
   return (
     <Box
@@ -23,88 +26,60 @@ const NotificationSidebar = ({
         width: 550,
         height: "100%",
         padding: 3,
-        background: "#fff",
-        borderRadius: "10px 0 0 10px",
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+        background: "linear-gradient(135deg, #f5f5f5, #ffffff)", // Soft gradient background
+        borderRadius: "12px 0 0 12px", // Rounded corners for a softer look
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)", // Subtle shadow for depth
         zIndex: 1200,
         overflowY: "auto",
-        transition: "all 0.3s ease",
+        transition: "all 0.3s ease-in-out",
       }}
     >
+      {/* Close button to enhance user control */}
+      <IconButton
+        onClick={closeSidebar}
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          color: "#888", // Muted color for the close button
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
+
+      {/* Sidebar Header */}
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: 600, color: "#333", marginBottom: 2 }}
+      >
+        Notifications
+      </Typography>
+
       {sidebarPost && (
-        <PostCard
-          key={sidebarPost.id}
-          post={sidebarPost}
-          token={token}
-          setError={setError}
-          username={username}
-          highlightedComment={highlightedComment}
-        />
-      )}
-
-      {projectData && (
-        <Box>
-          {/* Render Project Details if available */}
-          <Typography variant="h5" sx={{ fontWeight: "bold", marginBottom: 2 }}>
-            {projectData.projectName}
-          </Typography>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>Description:</strong> {projectData.description}
-          </Typography>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>Status:</strong> {projectData.status}
-          </Typography>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>Start Date:</strong> {projectData.startDate}
-          </Typography>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>End Date:</strong> {projectData.endDate}
-          </Typography>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>Donor:</strong> {projectData.donor || "N/A"}
-          </Typography>
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            <strong>Budget:</strong>{" "}
-            {projectData.budget
-              ? `$${projectData.budget.toLocaleString()}`
-              : "N/A"}
-          </Typography>
-
-          {projectData.location && projectData.location.length > 0 && (
-            <Typography variant="body1" sx={{ marginBottom: 2 }}>
-              <strong>Location:</strong> {projectData.location.join(", ")}
-            </Typography>
-          )}
-
-          {projectData.objectives && projectData.objectives.length > 0 && (
-            <Box sx={{ marginBottom: 2 }}>
-              <strong>Objectives:</strong>
-              <ul>
-                {projectData.objectives.map((objective, index) => (
-                  <li key={index}>
-                    <Typography variant="body2">{objective}</Typography>
-                  </li>
-                ))}
-              </ul>
-            </Box>
-          )}
-
-          {projectData.teamMembers && projectData.teamMembers.length > 0 && (
-            <Box>
-              <strong>Team Members:</strong>
-              <ul>
-                {projectData.teamMembers.map((member, index) => (
-                  <li key={index}>
-                    <Typography variant="body2">{member.username}</Typography>
-                  </li>
-                ))}
-              </ul>
-            </Box>
-          )}
+        <Box sx={{ marginBottom: 2 }}>
+          <PostCard
+            key={sidebarPost.id}
+            post={sidebarPost}
+            token={token}
+            setError={setError}
+            username={username}
+            highlightedComment={highlightedComment}
+          />
         </Box>
       )}
 
-      <Divider sx={{ marginTop: 3 }} />
+      {projectData && (
+        <Box sx={{ marginBottom: 2 }}>
+          <ProjectListItem project={projectData} onClick={() => {}} />
+        </Box>
+      )}
+
+      <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
+
+      {/* Optional: Additional content or footer */}
+      <Box sx={{ textAlign: "center", paddingTop: 2, color: "#999" }}>
+        <Typography variant="body2">Powered by Tara</Typography>
+      </Box>
     </Box>
   );
 };
