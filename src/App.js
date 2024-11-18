@@ -53,6 +53,7 @@ import appStyles from "./styles/AppStyles";
 import { fetchPostById, fetchCommentById } from "./utils/api/SidebarAPI";
 // Import NotificationSidebar
 import NotificationSidebar from "./components/common/NotificationSidebar";
+import { fetchProjectDetails } from "./utils/api/ProjectManagementAPI";
 
 const App = () => {
   const {
@@ -72,7 +73,7 @@ const App = () => {
   const [highlightedComment, setHighlightedComment] = useState(null);
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-
+  const [projectData, setProjectData] = useState(null); // Add this state
   // Reference to the notification sidebar
   const notificationSidebarRef = useRef(null);
 
@@ -101,26 +102,35 @@ const App = () => {
     try {
       const postId = notification.post_id;
       const commentId = notification.comment_id;
+      const projectId = notification.project_id;
 
-      // Fetch the post data
-      const postData = await fetchPostById(postId, token);
-
-      // Initialize commentData to null
+      // Initialize postData and commentData to null
+      let postData = null;
       let commentData = null;
+      let fetchedProjectData = null;
 
-      // If there's a comment_id, fetch the comment data
-      if (commentId !== null) {
+      // Fetch the post data if post_id exists
+      if (postId) {
+        postData = await fetchPostById(postId, token);
+      }
+
+      // Fetch the comment data if comment_id exists
+      if (commentId) {
         commentData = await fetchCommentById(postId, commentId, token);
       }
 
-      // Update the sidebar to display the post
-      setSidebarPost(postData);
+      // Fetch the project data if project_id exists
+      if (projectId && projectId !== "None") {
+        // Fetch the project details using the projectId
+        fetchedProjectData = await fetchProjectDetails(projectId, token);
+      }
 
-      // Pass the comment data (if exists) to be highlighted in the PostCard component
+      // Update the sidebar to display the post, comment, or project
+      setSidebarPost(postData);
       setHighlightedComment(commentData || null);
+      setProjectData(fetchedProjectData || null); // Update with fetched project details
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Handle the error (e.g., show an error message to the user)
       alert("There was an error fetching the notification details.");
     }
   };
@@ -128,21 +138,26 @@ const App = () => {
   // Close the notification sidebar if clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Check if the sidebar is visible and if the click is outside
       if (
         notificationSidebarRef.current &&
         !notificationSidebarRef.current.contains(event.target) &&
         !event.target.closest("#notification-button")
       ) {
+        // Close the sidebar if clicking outside, whether it's a post or project
         setSidebarPost(null);
+        setProjectData(null); // Also clear project data if it's showing
       }
     };
 
+    // Add the event listener when the component mounts
     document.addEventListener("click", handleClickOutside);
 
+    // Cleanup on component unmount or when dependencies change
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, []); // Empty dependency array to only run once when the component mounts
 
   return (
     <ThemeProvider theme={theme}>
@@ -338,6 +353,7 @@ const App = () => {
             token={token}
             username={username}
             setError={setError}
+            projectData={projectData}
           />
         </Box>
       </Box>
