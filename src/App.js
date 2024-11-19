@@ -54,6 +54,7 @@ import { fetchPostById, fetchCommentById } from "./utils/api/SidebarAPI";
 // Import NotificationSidebar
 import NotificationSidebar from "./components/common/NotificationSidebar";
 import { fetchProjectDetails } from "./utils/api/ProjectManagementAPI";
+import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog";
 
 const App = () => {
   const {
@@ -74,6 +75,8 @@ const App = () => {
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [projectData, setProjectData] = useState(null); // Add this state
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
   // Reference to the notification sidebar
   const notificationSidebarRef = useRef(null);
 
@@ -162,6 +165,15 @@ const App = () => {
   const closeSidebar = () => {
     setSidebarPost(null);
     setProjectData(null);
+  };
+
+  const openProjectDialog = (project) => {
+    setSelectedProjectId(project.id); // Set the selected project ID
+    setIsDialogOpen(true); // Open the dialog
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false); // Close the dialog
   };
 
   return (
@@ -360,7 +372,17 @@ const App = () => {
             setError={setError}
             projectData={projectData}
             closeSidebar={closeSidebar}
+            openProjectDialog={openProjectDialog}
           />
+          {/* Project Details Dialog */}
+          {isDialogOpen && (
+            <ProjectDetailsDialog
+              open={isDialogOpen}
+              onClose={closeDialog}
+              projectId={selectedProjectId}
+              token={token} // Pass token to ProjectDetailsDialog
+            />
+          )}
         </Box>
       </Box>
     </ThemeProvider>

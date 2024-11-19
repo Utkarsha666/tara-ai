@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Divider, Typography, IconButton } from "@mui/material";
 import PostCard from "../Community/PostCard";
 import ProjectListItem from "../Project/ProjectListItem";
-import CloseIcon from "@mui/icons-material/Close"; // Add a close icon for better UX
+import CloseIcon from "@mui/icons-material/Close";
 
 const NotificationSidebar = ({
   sidebarPost,
@@ -12,7 +12,8 @@ const NotificationSidebar = ({
   username,
   setError,
   projectData,
-  closeSidebar, // Add a close function as a prop to improve UX
+  closeSidebar,
+  openProjectDialog, // Function to open the project dialog
 }) => {
   if (!sidebarPost && !projectData) return null;
 
@@ -26,22 +27,22 @@ const NotificationSidebar = ({
         width: 550,
         height: "100%",
         padding: 3,
-        background: "linear-gradient(135deg, #f5f5f5, #ffffff)", // Soft gradient background
-        borderRadius: "12px 0 0 12px", // Rounded corners for a softer look
-        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)", // Subtle shadow for depth
+        background: "linear-gradient(135deg, #f5f5f5, #ffffff)",
+        borderRadius: "12px 0 0 12px",
+        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.15)",
         zIndex: 1200,
         overflowY: "auto",
         transition: "all 0.3s ease-in-out",
       }}
     >
-      {/* Close button to enhance user control */}
+      {/* Close button */}
       <IconButton
         onClick={closeSidebar}
         sx={{
           position: "absolute",
           top: 16,
           right: 16,
-          color: "#888", // Muted color for the close button
+          color: "#888",
         }}
       >
         <CloseIcon />
@@ -70,13 +71,15 @@ const NotificationSidebar = ({
 
       {projectData && (
         <Box sx={{ marginBottom: 2 }}>
-          <ProjectListItem project={projectData} onClick={() => {}} />
+          <ProjectListItem
+            project={projectData}
+            onClick={() => openProjectDialog(projectData)} // Trigger the dialog
+          />
         </Box>
       )}
 
       <Divider sx={{ marginTop: 3, marginBottom: 3 }} />
 
-      {/* Optional: Additional content or footer */}
       <Box sx={{ textAlign: "center", paddingTop: 2, color: "#999" }}>
         <Typography variant="body2">Powered by Tara</Typography>
       </Box>
