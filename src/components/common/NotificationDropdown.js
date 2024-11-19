@@ -27,10 +27,18 @@ const NotificationDropdown = ({
 
   const hasNotifications = notifications.length > 0;
 
-  const handleNotificationClick = (notification) => {
-    // Pass the notification details to the parent to fetch the post
-    onNotificationClick(notification);
-    onClose(); // Close the dropdown menu when a notification is clicked
+  const handleNotificationClick = async (notification) => {
+    // First, trigger the API call to mark the notification as read
+    await onNotificationClick(notification);
+
+    // Update the state to reflect that the notification has been read
+    const updatedNotifications = notifications.map((n) =>
+      n.id === notification.id ? { ...n, read: true } : n
+    );
+    setNotifications(updatedNotifications);
+
+    // Close the dropdown menu when a notification is clicked
+    onClose();
   };
 
   return (
@@ -72,18 +80,30 @@ const NotificationDropdown = ({
           <>
             {notifications.map((notification, index) => (
               <MenuItem
-                key={index}
+                key={notification.id} // Use notification.id as the key for uniqueness
                 sx={{ padding: 1, display: "flex", flexDirection: "column" }}
                 onClick={() => handleNotificationClick(notification)} // Handle click
               >
-                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: "bold",
+                    textDecoration: notification.read ? "line-through" : "none",
+                  }}
+                >
                   {notification.notification_type === "TAG"
                     ? `${notification.tagged_by} has mentioned you.`
                     : notification.notification_type === "PROJECT"
                     ? `${notification.tagged_by} has assigned you a project.`
                     : "You have a new notification."}
                 </Typography>
-                <Typography variant="body2" color={grey[600]}>
+                <Typography
+                  variant="body2"
+                  color={grey[600]}
+                  sx={{
+                    textDecoration: notification.read ? "line-through" : "none",
+                  }}
+                >
                   {notification.message ||
                     "View the details of the notification."}
                 </Typography>

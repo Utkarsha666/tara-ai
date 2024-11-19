@@ -19,3 +19,28 @@ export const fetchNotifications = async (userId) => {
     return []; // Return an empty array in case of an error
   }
 };
+
+// Function to mark a notification as read
+export const markNotificationAsRead = async (userId, notificationId) => {
+  const url = `https://climate-and-gender-ai.onrender.com/api/mark_notification_as_read/${userId}/${notificationId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: "",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to mark notification as read");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    throw error;
+  }
+};

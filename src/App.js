@@ -54,6 +54,7 @@ import { fetchPostById, fetchCommentById } from "./utils/api/SidebarAPI";
 // Import NotificationSidebar
 import NotificationSidebar from "./components/common/NotificationSidebar";
 import { fetchProjectDetails } from "./utils/api/ProjectManagementAPI";
+import { markNotificationAsRead } from "./utils/api/NotificationAPI";
 import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog";
 
 const App = () => {
@@ -106,6 +107,8 @@ const App = () => {
       const postId = notification.post_id;
       const commentId = notification.comment_id;
       const projectId = notification.project_id;
+
+      const response = await markNotificationAsRead(userId, notification.id);
 
       // Initialize postData and commentData to null
       let postData = null;
