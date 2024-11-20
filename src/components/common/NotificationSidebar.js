@@ -3,6 +3,7 @@ import { Box, Divider, Typography, IconButton } from "@mui/material";
 import PostCard from "../Community/PostCard";
 import ProjectListItem from "../Project/ProjectListItem";
 import CloseIcon from "@mui/icons-material/Close";
+import CircularLoading from "../common/CircularLoading"; // Import CircularLoading component
 
 const NotificationSidebar = ({
   sidebarPost,
@@ -14,8 +15,10 @@ const NotificationSidebar = ({
   projectData,
   closeSidebar,
   openProjectDialog, // Function to open the project dialog
+  isLoading, // New prop for loading state
 }) => {
-  if (!sidebarPost && !projectData) return null;
+  // If no post or project data and sidebar is not loading, return null
+  if (!sidebarPost && !projectData && !isLoading) return null;
 
   return (
     <Box
@@ -56,26 +59,43 @@ const NotificationSidebar = ({
         Notifications
       </Typography>
 
-      {sidebarPost && (
-        <Box sx={{ marginBottom: 2 }}>
-          <PostCard
-            key={sidebarPost.id}
-            post={sidebarPost}
-            token={token}
-            setError={setError}
-            username={username}
-            highlightedComment={highlightedComment}
-          />
+      {/* Show loading spinner if data is still being fetched */}
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <CircularLoading message="Loading Notifications..." />
         </Box>
-      )}
+      ) : (
+        <>
+          {/* Render post or project data */}
+          {sidebarPost && (
+            <Box sx={{ marginBottom: 2 }}>
+              <PostCard
+                key={sidebarPost.id}
+                post={sidebarPost}
+                token={token}
+                setError={setError}
+                username={username}
+                highlightedComment={highlightedComment}
+              />
+            </Box>
+          )}
 
-      {projectData && (
-        <Box sx={{ marginBottom: 2 }}>
-          <ProjectListItem
-            project={projectData}
-            onClick={() => openProjectDialog(projectData)} // Trigger the dialog
-          />
-        </Box>
+          {projectData && (
+            <Box sx={{ marginBottom: 2 }}>
+              <ProjectListItem
+                project={projectData}
+                onClick={() => openProjectDialog(projectData)}
+              />
+            </Box>
+          )}
+        </>
       )}
 
       <Divider sx={{ marginTop: 3, marginBottom: 3 }} />

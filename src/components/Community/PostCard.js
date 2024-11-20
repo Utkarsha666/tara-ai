@@ -32,6 +32,7 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
   const [showAllComments, setShowAllComments] = useState(false); // State to toggle comments
   const [dialogOpen, setDialogOpen] = useState(false); // State to control the dialog visibility
   const [isContentExpanded, setIsContentExpanded] = useState(false); // State to track content expansion
+  const [clickedUsername, setClickedUsername] = useState(null); // Track which username is clicked (post.author or tagged user)
 
   // Function to add a comment
   const handleAddComment = async (postId) => {
@@ -80,7 +81,8 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
   };
 
   // Function to handle username click and open the dialog
-  const handleUsernameClick = () => {
+  const handleUsernameClick = (clickedUser) => {
+    setClickedUsername(clickedUser); // Set clicked username (either post.author or tagged user)
     setDialogOpen(true); // Open the dialog
   };
 
@@ -90,6 +92,27 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
       return isContentExpanded ? content : content.slice(0, maxLength) + "...";
     }
     return content;
+  };
+
+  // Function to replace @username with a clickable link in post content
+  const handlePostContent = (content) => {
+    const regex = /@([a-zA-Z0-9_]+)/g; // Match @username pattern
+    return content.split(regex).map((part, index) => {
+      if (index % 2 === 1) {
+        // If it's a username (odd index in the split result), make it a clickable link
+        return (
+          <span
+            key={index}
+            style={{ color: "#007bff", cursor: "pointer" }}
+            onClick={() => handleUsernameClick(part)}
+          >
+            @{part}
+          </span>
+        );
+      }
+      // Regular text part (even index in the split result)
+      return part;
+    });
   };
 
   return (
@@ -105,10 +128,10 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
             </Avatar>
             <Box sx={{ marginLeft: 2 }}>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                {/* Make the username clickable */}
+                {/* Make the post.author clickable */}
                 <span
                   style={{ color: "#007bff", cursor: "pointer" }}
-                  onClick={handleUsernameClick}
+                  onClick={() => handleUsernameClick(post.author)}
                 >
                   {post.author}
                 </span>
@@ -121,9 +144,12 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
         </PostUserTime>
       </PostHeader>
 
-      {/* Post content with show more / show less functionality */}
+      {/* Post content with clickable @username links */}
       <PostContent>
-        <Typography variant="body1">{truncateContent(post.content)}</Typography>
+        <Typography variant="body1">
+          {handlePostContent(post.content)}{" "}
+          {/* Process content for tagged usernames */}
+        </Typography>
         {post.content.length > 200 && (
           <span
             style={{ color: "#007bff", cursor: "pointer", marginTop: 10 }}
@@ -142,7 +168,7 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
         {highlightedComment && (
           <Box
             sx={{
-              backgroundColor: "#f0f8ff", // Light blue background to highlight
+              backgroundColor: "#f0f8ff",
               padding: "10px",
               marginBottom: "20px",
               borderRadius: "5px",
@@ -203,7 +229,7 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
       <UserProfileDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        username={post.author}
+        username={clickedUsername}
         token={token}
       />
     </PostCardWrapper>

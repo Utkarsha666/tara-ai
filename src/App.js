@@ -78,6 +78,7 @@ const App = () => {
   const [projectData, setProjectData] = useState(null); // Add this state
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [loadingSidebar, setLoadingSidebar] = useState(false);
   // Reference to the notification sidebar
   const notificationSidebarRef = useRef(null);
 
@@ -103,6 +104,8 @@ const App = () => {
   };
 
   const handleNotificationClick = async (notification) => {
+    setLoadingSidebar(true); // Set loading to true when fetching data
+
     try {
       const postId = notification.post_id;
       const commentId = notification.comment_id;
@@ -138,6 +141,8 @@ const App = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("There was an error fetching the notification details.");
+    } finally {
+      setLoadingSidebar(false); // Set loading to false after fetching is complete
     }
   };
 
@@ -376,6 +381,7 @@ const App = () => {
             projectData={projectData}
             closeSidebar={closeSidebar}
             openProjectDialog={openProjectDialog}
+            isLoading={loadingSidebar}
           />
           {/* Project Details Dialog */}
           {isDialogOpen && (
