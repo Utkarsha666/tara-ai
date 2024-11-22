@@ -5,7 +5,7 @@ export const fetchProjects = async (token) => {
   }
 
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/api/projects/",
+    "https://taranepal.onrender.com/api/projects/",
     {
       method: "GET",
       headers: {
@@ -24,7 +24,7 @@ export const fetchProjects = async (token) => {
 
 export const fetchProjectDetails = async (projectId, token) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/api/projects/${projectId}`,
+    `https://taranepal.onrender.com/api/projects/${projectId}`,
     {
       method: "GET",
       headers: {
@@ -47,7 +47,7 @@ export const updateProjectDetails = async (
   updatedProject
 ) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/api/projects/${projectId}`,
+    `https://taranepal.onrender.com/api/projects/${projectId}`,
     {
       method: "PUT",
       headers: {
@@ -68,7 +68,7 @@ export const updateProjectDetails = async (
 
 export const addProject = async (newProject, token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/api/projects/",
+    "https://taranepal.onrender.com/api/projects/",
     {
       method: "POST",
       headers: {

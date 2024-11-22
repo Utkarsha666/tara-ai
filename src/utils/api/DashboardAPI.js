@@ -2,7 +2,7 @@
 
 export const fetchClimateData = async (token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/api/forecast_climate_change_prediction",
+    "https://taranepal.onrender.com/api/forecast_climate_change_prediction",
     {
       method: "GET",
       headers: {
@@ -17,7 +17,7 @@ export const fetchClimateData = async (token) => {
 
 export const fetchGiiData = async (token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/api/gii_forecast",
+    "https://taranepal.onrender.com/api/gii_forecast",
     {
       method: "GET",
       headers: {
@@ -32,7 +32,7 @@ export const fetchGiiData = async (token) => {
 
 export const fetchGraphData = async (token, relation) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/api/get-graph?relation_option=${relation}`,
+    `https://taranepal.onrender.com/api/get-graph?relation_option=${relation}`,
     {
       method: "GET",
       headers: {
@@ -47,7 +47,7 @@ export const fetchGraphData = async (token, relation) => {
 
 export const fetchChatbotResponse = async (token, input) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/chatbot/question?user_input=${encodeURIComponent(
+    `https://taranepal.onrender.com/chatbot/question?user_input=${encodeURIComponent(
       input
     )}`,
     {

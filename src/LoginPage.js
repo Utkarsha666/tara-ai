@@ -46,7 +46,7 @@ const LoginPage = () => {
 
       // Step 1: Request the access token
       const response = await fetch(
-        "https://climate-and-gender-ai.onrender.com/auth/token",
+        "https://taranepal.onrender.com/auth/token",
         {
           method: "POST",
           headers: {

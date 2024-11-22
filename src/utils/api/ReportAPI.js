@@ -1,6 +1,6 @@
 export const fetchReports = async (token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/report/get-reports",
+    "https://taranepal.onrender.com/report/get-reports",
     {
       method: "GET",
       headers: {
@@ -22,7 +22,7 @@ export const fetchReports = async (token) => {
 
 export const generateReport = async (topic, maxAnalysts, token) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/report/generate-report?topic=${encodeURIComponent(
+    `https://taranepal.onrender.com/report/generate-report?topic=${encodeURIComponent(
       topic
     )}&max_analysts=${maxAnalysts}`,
     {
@@ -43,7 +43,7 @@ export const generateReport = async (topic, maxAnalysts, token) => {
 
 export const submitFeedback = async (threadId, feedback, token) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/report/submit-feedback?thread_id=${encodeURIComponent(
+    `https://taranepal.onrender.com/report/submit-feedback?thread_id=${encodeURIComponent(
       threadId
     )}&feedback=${encodeURIComponent(feedback)}`,
     {

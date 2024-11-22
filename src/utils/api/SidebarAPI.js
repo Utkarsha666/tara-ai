@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://climate-and-gender-ai.onrender.com/api/community";
+const API_BASE_URL = "https://taranepal.onrender.com/api/community";
 
 // Fetch post data by ID using fetch API
 export const fetchPostById = async (postId, token) => {

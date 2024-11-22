@@ -55,7 +55,7 @@ const ImpactPoints = () => {
     const fetchTotalProjects = async () => {
       try {
         const response = await fetch(
-          "https://climate-and-gender-ai.onrender.com/api/project/count",
+          "https://taranepal.onrender.com/api/project/count",
           {
             method: "GET",
             headers: {

@@ -1,6 +1,6 @@
 export const fetchUserData = async (token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/auth/users/me/",
+    "https://taranepal.onrender.com/auth/users/me/",
     {
       method: "GET",
       headers: {
@@ -19,7 +19,7 @@ export const fetchUserData = async (token) => {
 
 export const updateUserProfile = async (token, formData) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/auth/users/me/",
+    "https://taranepal.onrender.com/auth/users/me/",
     {
       method: "PUT",
       headers: {

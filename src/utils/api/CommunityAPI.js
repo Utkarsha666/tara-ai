@@ -1,7 +1,7 @@
 // Fetch all posts
 export const fetchPosts = async (token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/api/community/posts/",
+    "https://taranepal.onrender.com/api/community/posts/",
     {
       method: "GET",
       headers: {
@@ -21,7 +21,7 @@ export const fetchPosts = async (token) => {
 // Fetch user data by username
 export const fetchUserData = async (username, token) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/auth/users/${username}`,
+    `https://taranepal.onrender.com/auth/users/${username}`,
     {
       method: "GET",
       headers: {
@@ -41,7 +41,7 @@ export const fetchUserData = async (username, token) => {
 // Create a new post
 export const createPost = async (newPost, token) => {
   const response = await fetch(
-    "https://climate-and-gender-ai.onrender.com/api/community/posts/",
+    "https://taranepal.onrender.com/api/community/posts/",
     {
       method: "POST",
       headers: {
@@ -63,7 +63,7 @@ export const createPost = async (newPost, token) => {
 // Add a comment to a post
 export const addComment = async (postId, comment, token) => {
   const response = await fetch(
-    `https://climate-and-gender-ai.onrender.com/api/community/posts/${postId}/comments/`,
+    `https://taranepal.onrender.com/api/community/posts/${postId}/comments/`,
     {
       method: "POST",
       headers: {

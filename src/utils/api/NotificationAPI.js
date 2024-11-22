@@ -1,5 +1,5 @@
 // NotificationAPI.js
-const API_URL = "https://climate-and-gender-ai.onrender.com/api/notifications/";
+const API_URL = "https://taranepal.onrender.com/api/notifications/";
 
 export const fetchNotifications = async (userId) => {
   try {
@@ -22,7 +22,7 @@ export const fetchNotifications = async (userId) => {
 
 // Function to mark a notification as read
 export const markNotificationAsRead = async (userId, notificationId) => {
-  const url = `https://climate-and-gender-ai.onrender.com/api/mark_notification_as_read/${userId}/${notificationId}`;
+  const url = `https://taranepal.onrender.com/api/mark_notification_as_read/${userId}/${notificationId}`;
 
   try {
     const response = await fetch(url, {
