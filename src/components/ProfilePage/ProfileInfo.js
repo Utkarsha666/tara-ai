@@ -91,7 +91,7 @@ const ProfileInfo = ({ userData }) => {
 
       <Divider sx={{ marginY: 3 }} />
       <Typography variant="h6" align="center" gutterBottom>
-        <strong>Projects Involved:</strong>
+        <strong>Active Projects:</strong>
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
         {/* Check if projectsInvolved is an array and has at least one item */}

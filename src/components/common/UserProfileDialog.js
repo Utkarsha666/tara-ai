@@ -82,7 +82,7 @@ const UserProfileDialog = ({ open, onClose, username, token }) => {
             {/* Add the Divider and Projects Involved section */}
             <Divider sx={{ marginY: 3 }} />
             <Typography variant="h6" align="center" gutterBottom>
-              <strong>Projects Involved:</strong>
+              <strong>Active Projects:</strong>
             </Typography>
             <Box
               sx={{
