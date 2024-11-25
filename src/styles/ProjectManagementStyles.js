@@ -106,3 +106,31 @@ export const loadingStyle = {
   textAlign: "center",
   marginTop: "2rem",
 };
+
+export const dropdownStyles = {
+  background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)", // Subtle gradient background
+  borderRadius: 8, // Rounded corners for a smooth appearance
+  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Light shadow for depth
+  transition: "all 0.3s ease", // Smooth transition for hover/focus states
+  marginTop: 2,
+  "&:hover": {
+    background: "linear-gradient(145deg, #e6eef4, #d0d8e7)", // Slightly darker gradient on hover
+    boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)", // Larger shadow on hover
+  },
+  "& .MuiSelect-root": {
+    fontSize: "1rem", // Larger text for readability
+    color: "#333", // Dark text color for good contrast
+    fontWeight: 500, // Medium weight for readability
+    padding: "10px 15px", // Comfortable padding
+  },
+  "& .MuiSelect-icon": {
+    color: "#3f51b5", // Color of the dropdown icon (chevron)
+  },
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#c9d6e3", // Subtle border color
+  },
+  "&:focus-within .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#3f51b5", // Blue border when focused
+    boxShadow: "0px 0px 0px 3px rgba(63, 81, 181, 0.3)", // Glow effect on focus
+  },
+};

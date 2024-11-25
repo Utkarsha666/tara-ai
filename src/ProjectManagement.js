@@ -1,5 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Box, Button, Typography, Container, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Container,
+  Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { AuthContext } from "./AuthContext";
 import Pagination from "./components/common/Pagination";
 import CircularLoading from "./components/common/CircularLoading";
@@ -14,6 +24,7 @@ import {
   buttonStyles,
   titleStyle,
   cardStyles,
+  dropdownStyles,
 } from "./styles/ProjectManagementStyles";
 
 const ProjectManagement = () => {
@@ -22,20 +33,22 @@ const ProjectManagement = () => {
   const [page, setPage] = useState(1);
   const [totalProjects, setTotalProjects] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [openDialog, setOpenDialog] = useState(false); // Track if the project details dialog is open
-  const [selectedProjectId, setSelectedProjectId] = useState(null); // Track selected project ID
-  const [isEditFormOpen, setIsEditFormOpen] = useState(false); // For form dialog visibility
-  const [projectDetails, setProjectDetails] = useState(null); // Holds selected project details for editing
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [projectDetails, setProjectDetails] = useState(null);
 
   // Snackbar state
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Controls visibility of the Snackbar
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // Message to be displayed
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Severity of the message ('success' or 'error')
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [category, setCategory] = useState("Projects");
 
   const projectsPerPage = 10;
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false); // Close the snackbar
+    setSnackbarOpen(false);
   };
 
   useEffect(() => {
@@ -48,8 +61,16 @@ const ProjectManagement = () => {
 
       try {
         setLoading(true);
-        const data = await fetchProjects(token);
-        console.log("Fetched projects:", data);
+
+        // Fetch all projects, but filter them based on selected category
+        let data = await fetchProjects(token);
+
+        // If a category other than 'Projects' is selected, you could filter here
+        if (category === "Capacity Building" || category === "Events") {
+          // For now, we do nothing and just show all projects as a placeholder
+          // Later, you could add specific filtering based on the category
+          console.log(`Category: ${category}, no filtering applied for now`);
+        }
 
         // Reverse the array to show the most recent projects first
         const reversedProjects = [...data].reverse();
@@ -69,7 +90,7 @@ const ProjectManagement = () => {
     };
 
     getProjects();
-  }, [page, token]);
+  }, [page, token, category]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -161,6 +182,21 @@ const ProjectManagement = () => {
           </Button>
         </Box>
       </Box>
+
+      {/* Dropdown for Category */}
+      <FormControl variant="outlined" sx={{ marginBottom: 2, marginTop: 2 }}>
+        <InputLabel>Category</InputLabel>
+        <Select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          label="Category"
+          sx={dropdownStyles} // Apply the custom dropdown styles
+        >
+          <MenuItem value="Projects">Projects</MenuItem>
+          <MenuItem value="Capacity Building">Capacity Building</MenuItem>
+          <MenuItem value="Events">Events</MenuItem>
+        </Select>
+      </FormControl>
 
       {/* If loading, display the CircularLoading component */}
       {loading ? (
