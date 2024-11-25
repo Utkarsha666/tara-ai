@@ -53,7 +53,10 @@ import appStyles from "./styles/AppStyles";
 import { fetchPostById, fetchCommentById } from "./utils/api/SidebarAPI";
 // Import NotificationSidebar
 import NotificationSidebar from "./components/common/NotificationSidebar";
-import { fetchProjectDetails } from "./utils/api/ProjectManagementAPI";
+import {
+  fetchProjectDetails,
+  fetchCapacityBuildingProgramsDetails,
+} from "./utils/api/ProjectManagementAPI";
 import { markNotificationAsRead } from "./utils/api/NotificationAPI";
 import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog";
 
@@ -79,6 +82,7 @@ const App = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [loadingSidebar, setLoadingSidebar] = useState(false);
+  const [notificationType, setNotificationType] = useState(null);
   // Reference to the notification sidebar
   const notificationSidebarRef = useRef(null);
 
@@ -110,34 +114,47 @@ const App = () => {
       const postId = notification.post_id;
       const commentId = notification.comment_id;
       const projectId = notification.project_id;
+      const programId = notification.program_id;
+      const notificationType = notification.notification_type;
 
-      const response = await markNotificationAsRead(userId, notification.id);
+      // Mark the notification as read
+      await markNotificationAsRead(userId, notification.id);
 
-      // Initialize postData and commentData to null
+      // Initialize the data variables
       let postData = null;
       let commentData = null;
       let fetchedProjectData = null;
+      let fetchedCapacityBuildingData = null;
 
-      // Fetch the post data if post_id exists
-      if (postId) {
-        postData = await fetchPostById(postId, token);
+      // Handle different types of notifications
+      if (notificationType === "TAG") {
+        // If the notification type is "TAG", fetch the post and comment data
+        if (postId) {
+          postData = await fetchPostById(postId, token);
+        }
+
+        if (commentId) {
+          commentData = await fetchCommentById(postId, commentId, token);
+        }
+      } else if (notificationType === "PROJECT") {
+        // If the notification type is "PROJECT", fetch project data
+        if (projectId && projectId !== "None") {
+          fetchedProjectData = await fetchProjectDetails(projectId, token);
+        }
+      } else if (notificationType === "CAPACITY_BUILDING") {
+        // If the notification type is "CAPACITY_BUILDING", fetch capacity building data
+        if (programId && programId !== "None") {
+          fetchedCapacityBuildingData =
+            await fetchCapacityBuildingProgramsDetails(programId, token);
+        }
       }
 
-      // Fetch the comment data if comment_id exists
-      if (commentId) {
-        commentData = await fetchCommentById(postId, commentId, token);
-      }
-
-      // Fetch the project data if project_id exists
-      if (projectId && projectId !== "None") {
-        // Fetch the project details using the projectId
-        fetchedProjectData = await fetchProjectDetails(projectId, token);
-      }
-
-      // Update the sidebar to display the post, comment, or project
-      setSidebarPost(postData);
-      setHighlightedComment(commentData || null);
-      setProjectData(fetchedProjectData || null); // Update with fetched project details
+      // Update the sidebar with the fetched data based on the notification type
+      setSidebarPost(postData); // Set post data if available
+      setHighlightedComment(commentData || null); // Set comment data if available
+      setProjectData(fetchedProjectData || fetchedCapacityBuildingData || null); // Set project or capacity building data
+      // Pass the notification type to the sidebar
+      setNotificationType(notificationType);
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("There was an error fetching the notification details.");
@@ -389,6 +406,7 @@ const App = () => {
               open={isDialogOpen}
               onClose={closeDialog}
               projectId={selectedProjectId}
+              notificationType={notificationType}
               token={token} // Pass token to ProjectDetailsDialog
             />
           )}

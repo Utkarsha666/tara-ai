@@ -110,6 +110,28 @@ const ProfileInfo = ({ userData }) => {
           </Typography>
         )}
       </Box>
+      <Divider sx={{ marginY: 3 }} />
+
+      <Typography variant="h6" align="center" gutterBottom>
+        <strong>Active Capacity Building Programs:</strong>
+      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+        {/* Display Capacity Building Programs */}
+        {Array.isArray(userData.capacityBuildingPrograms) &&
+        userData.capacityBuildingPrograms.length > 0 ? (
+          userData.capacityBuildingPrograms.map((project, index) => (
+            <Chip
+              key={`capacity-building-${index}`}
+              label={project.projectName} // Access programName from the object
+              sx={{ marginRight: 1, marginBottom: 1 }}
+            />
+          ))
+        ) : (
+          <Typography variant="body1" color="textSecondary" align="center">
+            No capacity building programs involved.
+          </Typography>
+        )}
+      </Box>
     </>
   );
 };

@@ -3,6 +3,8 @@ import { Dialog, Divider, Box, IconButton } from "@mui/material";
 import {
   fetchProjectDetails,
   updateProjectDetails,
+  fetchCapacityBuildingProgramsDetails,
+  updateCapacityBuildingProgramsDetails,
 } from "../../utils/api/ProjectManagementAPI";
 import GradientButton from "../common/Button";
 import CircularLoading from "../common/CircularLoading";
@@ -24,7 +26,14 @@ import {
 
 import SuccessSnackbar from "../common/SuccessSnackbar"; // Import SuccessSnackbar
 
-const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
+const ProjectDetailsDialog = ({
+  open,
+  onClose,
+  projectId,
+  token,
+  category,
+  notificationType,
+}) => {
   const [projectDetails, setProjectDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [userProfileOpen, setUserProfileOpen] = useState(false);
@@ -42,7 +51,18 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
 
       setLoading(true); // Start loading
       try {
-        const data = await fetchProjectDetails(projectId, token);
+        let data;
+
+        // Fetch data based on category
+        if (category === "Projects" || notificationType === "PROJECT") {
+          data = await fetchProjectDetails(projectId, token);
+        } else if (
+          category === "Capacity Building" ||
+          notificationType === "CAPACITY_BUILDING"
+        ) {
+          data = await fetchCapacityBuildingProgramsDetails(projectId, token);
+        }
+
         setProjectDetails(data);
       } catch (error) {
         console.error("Error fetching project details:", error);
@@ -54,7 +74,7 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
     if (open) {
       getProjectDetails();
     }
-  }, [open, projectId, token]);
+  }, [open, projectId, token, category]);
 
   const handleUsernameClick = (username) => {
     setSelectedUsername(username);
@@ -71,25 +91,41 @@ const ProjectDetailsDialog = ({ open, onClose, projectId, token }) => {
 
   const handleSubmitEdit = async (updatedProject) => {
     try {
-      const response = await updateProjectDetails(
-        projectId,
-        token,
-        updatedProject
-      );
-      setProjectDetails(response); // Update the project details state with the response
+      let response;
+
+      // Check the category and call the appropriate API function
+      if (category === "Projects" || notificationType === "PROJECT") {
+        response = await updateProjectDetails(projectId, token, updatedProject);
+      } else if (
+        category === "Capacity Building" ||
+        notificationType === "CAPACITY_BUILDING"
+      ) {
+        response = await updateCapacityBuildingProgramsDetails(
+          projectId,
+          token,
+          updatedProject
+        );
+      }
+
+      // Update project details state with the response
+      setProjectDetails(response);
       setIsEditFormOpen(false); // Close the form after successful submission
 
       // Show success snackbar
-      setSnackbarMessage("Project updated successfully!");
+      if (category) {
+        setSnackbarMessage(`${category} updated successfully!`);
+      } else {
+        setSnackbarMessage(`${notificationType} updated successfully!`);
+      }
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
-      console.error("Error updating project:", error);
+      console.error("Error updating projects:", error);
 
-      // Assuming the API provides an error message in the response body (error.response.data.message)
+      // Handle API error messages
       const errorMessage =
         error.response?.data?.message ||
-        "Either you are not an team member or the username is invalid";
+        "Either you are not a team member or the username is invalid";
 
       // Show error snackbar with the message from the API
       setSnackbarMessage(errorMessage);

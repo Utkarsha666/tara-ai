@@ -80,7 +80,7 @@ const UserProfileDialog = ({ open, onClose, username, token }) => {
             </StyledTypography>
 
             {/* Add the Divider and Projects Involved section */}
-            <Divider sx={{ marginY: 3 }} />
+            <Divider sx={{ marginY: 2 }} />
             <Typography variant="h6" align="center" gutterBottom>
               <strong>Active Projects:</strong>
             </Typography>
@@ -108,6 +108,38 @@ const UserProfileDialog = ({ open, onClose, username, token }) => {
                   align="center"
                 >
                   No projects involved.
+                </Typography>
+              )}
+            </Box>
+            {/* Add the Divider and Projects Involved section */}
+            <Divider sx={{ marginY: 1 }} />
+            <Typography variant="h6" align="center" gutterBottom>
+              <strong>Active Capacity Building Programs:</strong>
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {/* Check if projectsInvolved is an array and has at least one item */}
+              {Array.isArray(userInfo.capacityBuildingPrograms) &&
+              userInfo.capacityBuildingPrograms.length > 0 ? (
+                userInfo.capacityBuildingPrograms.map((project, index) => (
+                  <Chip
+                    key={index}
+                    label={project.projectName} // Access projectName from the object
+                    sx={{ marginRight: 1, marginBottom: 1 }}
+                  />
+                ))
+              ) : (
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  align="center"
+                >
+                  No Capacity Building Program Involved.
                 </Typography>
               )}
             </Box>

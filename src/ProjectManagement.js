@@ -13,11 +13,16 @@ import {
 import { AuthContext } from "./AuthContext";
 import Pagination from "./components/common/Pagination";
 import CircularLoading from "./components/common/CircularLoading";
-import { fetchProjects, addProject } from "./utils/api/ProjectManagementAPI";
+import {
+  fetchProjects,
+  addProject,
+  fetchCapacityBuildingPrograms,
+  addCapacityBuildingPrograms,
+} from "./utils/api/ProjectManagementAPI";
 import ProjectListItem from "./components/Project/ProjectListItem";
-import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog"; // Import the Dialog component
-import ProjectFormDialog from "./components/Project/ProjectFormDialog"; // Import the ProjectFormDialog
-import SuccessSnackbar from "./components/common/SuccessSnackbar"; // Import Snackbar component
+import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog";
+import ProjectFormDialog from "./components/Project/ProjectFormDialog";
+import SuccessSnackbar from "./components/common/SuccessSnackbar";
 import {
   boxStyles,
   bannerImageStyle,
@@ -62,28 +67,31 @@ const ProjectManagement = () => {
       try {
         setLoading(true);
 
-        // Fetch all projects, but filter them based on selected category
-        let data = await fetchProjects(token);
+        let data;
 
-        // If a category other than 'Projects' is selected, you could filter here
-        if (category === "Capacity Building" || category === "Events") {
-          // For now, we do nothing and just show all projects as a placeholder
-          // Later, you could add specific filtering based on the category
-          console.log(`Category: ${category}, no filtering applied for now`);
+        // Fetch data based on the selected category
+        if (category === "Projects") {
+          data = await fetchProjects(token); // Fetch projects when category is "Projects"
+        } else if (category === "Capacity Building") {
+          data = await fetchCapacityBuildingPrograms(token); // Fetch capacity building programs when category is "Capacity Building"
+        } else if (category === "Events") {
+          // For now, do nothing for "Events" category (you can add logic later if needed)
+          data = [];
+          console.log("Category: Events, no fetching logic implemented yet");
         }
 
-        // Reverse the array to show the most recent projects first
-        const reversedProjects = [...data].reverse();
+        // Reverse the array to show the most recent items first
+        const reversedData = [...data].reverse();
 
-        setTotalProjects(reversedProjects.length);
+        setTotalProjects(reversedData.length);
         setProjects(
-          reversedProjects.slice(
+          reversedData.slice(
             (page - 1) * projectsPerPage,
             page * projectsPerPage
           )
         );
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
@@ -98,6 +106,7 @@ const ProjectManagement = () => {
 
   const handleProjectClick = (projectId) => {
     setSelectedProjectId(projectId);
+    setCategory(category);
     setOpenDialog(true);
   };
 
@@ -115,27 +124,36 @@ const ProjectManagement = () => {
     setIsEditFormOpen(false); // Close the form dialog
   };
 
-  const handleAddProjectSubmit = async (formData) => {
+  const handleAddSubmit = async (formData) => {
     try {
       if (formData.teamMembers.length === 0) {
         throw new Error("At least one team member is required");
       }
-      const newProject = await addProject(formData, token);
 
-      setProjects([newProject, ...projects]);
+      let newItem;
+
+      if (category === "Projects") {
+        newItem = await addProject(formData, token);
+      } else if (category === "Capacity Building") {
+        newItem = await addCapacityBuildingPrograms(formData, token);
+      }
+
+      // Add the new item (either project or capacity building) to the list
+      setProjects([newItem, ...projects]);
       setTotalProjects(totalProjects + 1);
       setIsEditFormOpen(false);
 
       // Show success snackbar
-      setSnackbarMessage("Project added successfully!");
+      setSnackbarMessage(`${category} added successfully!`);
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (error) {
-      console.error("Error adding project:", error);
+      console.error("Error adding item:", error);
 
       // Show error snackbar with the custom message
       setSnackbarMessage(
-        error.message || "An error occurred while adding the project."
+        error.message ||
+          `An error occurred while adding the ${category.toLowerCase()}.`
       );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
@@ -150,27 +168,36 @@ const ProjectManagement = () => {
       {/* Banner Image Section */}
       <Box sx={bannerImageStyle} />
 
-      {/* Add Projects Box Below the Banner */}
+      {/* Add Projects Box */}
       <Box sx={boxStyles}>
+        {/* Add Project Button */}
         <Box sx={cardStyles}>
           <Button
             variant="contained"
             sx={buttonStyles}
-            onClick={handleOpenAddProjectDialog}
+            onClick={() => {
+              setCategory("Projects"); // Ensure category is set to "Projects"
+              handleOpenAddProjectDialog();
+            }}
           >
             Add Project
           </Button>
         </Box>
+
         {/* Add Capacity Building Program */}
         <Box sx={cardStyles}>
           <Button
             variant="contained"
             sx={buttonStyles}
-            onClick={handleOpenAddProjectDialog}
+            onClick={() => {
+              setCategory("Capacity Building"); // Set category to "Capacity Building"
+              handleOpenAddProjectDialog();
+            }}
           >
             Add Capacity Building Program
           </Button>
         </Box>
+
         {/* Add Event */}
         <Box sx={cardStyles}>
           <Button
@@ -230,6 +257,7 @@ const ProjectManagement = () => {
         onClose={handleCloseDialog}
         projectId={selectedProjectId}
         token={token}
+        category={category} // Add category here
       />
 
       {/* Add Project Form Dialog */}
@@ -237,7 +265,7 @@ const ProjectManagement = () => {
         <ProjectFormDialog
           open={isEditFormOpen}
           onClose={handleCloseFormDialog}
-          onSubmit={handleAddProjectSubmit}
+          onSubmit={handleAddSubmit}
           isEditing={false}
         />
       )}

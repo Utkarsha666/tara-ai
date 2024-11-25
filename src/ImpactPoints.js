@@ -3,6 +3,10 @@ import { Line, Bar } from "react-chartjs-2";
 import { Box, Typography } from "@mui/material";
 import CircularLoading from "./components/common/CircularLoading"; // Import CircularLoading component
 import { AuthContext } from "./AuthContext"; // Import the AuthContext
+import {
+  fetchTotalProjects,
+  fetchCapacityBuildingPrograms,
+} from "./utils/api/ImpactPointsAPI"; // Import the functions
 
 import {
   Chart as ChartJS,
@@ -46,30 +50,25 @@ const ImpactPoints = () => {
   // Use the AuthContext to get the token
   const { token } = useContext(AuthContext);
 
-  // State to store the total projects and loading state
+  // State to store the total projects, capacity building programs, and loading state
   const [totalProjects, setTotalProjects] = useState(0);
+  const [capacityBuildingPrograms, setCapacityBuildingPrograms] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch total projects from the API
+  // Fetch total projects and capacity building programs from the API
   useEffect(() => {
-    const fetchTotalProjects = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://taranepal.onrender.com/api/project/count",
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        if (token) {
+          // Fetch total projects and capacity building programs concurrently
+          const [projectsData, capacityData] = await Promise.all([
+            fetchTotalProjects(token),
+            fetchCapacityBuildingPrograms(token),
+          ]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setTotalProjects(data);
-        } else {
-          console.error("Failed to fetch total projects");
+          // Set the fetched data into state
+          setTotalProjects(projectsData);
+          setCapacityBuildingPrograms(capacityData);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -78,11 +77,7 @@ const ImpactPoints = () => {
       }
     };
 
-    if (token) {
-      fetchTotalProjects();
-    } else {
-      setLoading(false);
-    }
+    fetchData();
   }, [token]); // Run effect whenever the token changes
 
   // Mock Data for the Charts (unchanged)
@@ -136,7 +131,7 @@ const ImpactPoints = () => {
               </TotalProjectsCard>
             </BoxItem>
 
-            {/* Capacity Building Program Box - Set to 0 */}
+            {/* Capacity Building Program Box - Display dynamic value */}
             <BoxItem>
               <CapacityBuildingCard>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -151,7 +146,8 @@ const ImpactPoints = () => {
                   variant="h4"
                   sx={{ fontWeight: 700, color: "#fff" }}
                 >
-                  1 {/* Set the value to 0 for now */}
+                  {capacityBuildingPrograms}{" "}
+                  {/* Display dynamically fetched value */}
                 </Typography>
               </CapacityBuildingCard>
             </BoxItem>
