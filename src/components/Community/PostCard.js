@@ -147,8 +147,7 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
       {/* Post content with clickable @username links */}
       <PostContent>
         <Typography variant="body1">
-          {handlePostContent(post.content)}{" "}
-          {/* Process content for tagged usernames */}
+          {truncateContent(post.content)} {/* Apply the truncation logic */}
         </Typography>
         {post.content.length > 200 && (
           <span

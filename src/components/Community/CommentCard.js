@@ -25,6 +25,7 @@ const CommentCard = ({ comment, token }) => {
   const { author, content, created_at } = comment;
   const [dialogOpen, setDialogOpen] = useState(false); // State to control dialog open/close
   const [clickedUsername, setClickedUsername] = useState(null); // State to store clicked username (either author or @username)
+  const [isContentExpanded, setIsContentExpanded] = useState(false); // State for content expansion toggle
   const avatar = author?.avatar || "/default-avatar.png"; // Default avatar if not available
   const commentDate = formatDate(created_at); // Format comment creation date
 
@@ -59,6 +60,14 @@ const CommentCard = ({ comment, token }) => {
     });
   };
 
+  // Function to truncate content to a specific length
+  const truncateContent = (content, maxLength = 200) => {
+    if (content.length > maxLength) {
+      return isContentExpanded ? content : content.slice(0, maxLength) + "...";
+    }
+    return content;
+  };
+
   return (
     <>
       <CommentCardWrapper>
@@ -82,8 +91,17 @@ const CommentCard = ({ comment, token }) => {
         {/* Comment Content */}
         <CommentContent>
           <Typography variant="body1" sx={{ color: "#333", lineHeight: 1.5 }}>
-            {handleCommentContent(content) || "No content available"}
+            {handleCommentContent(truncateContent(content))}{" "}
+            {/* Apply truncation logic */}
           </Typography>
+          {content.length > 200 && (
+            <span
+              style={{ color: "#007bff", cursor: "pointer", marginTop: 10 }}
+              onClick={() => setIsContentExpanded(!isContentExpanded)}
+            >
+              {isContentExpanded ? "Show Less" : "Show More"}
+            </span>
+          )}
         </CommentContent>
       </CommentCardWrapper>
 
