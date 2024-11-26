@@ -18,6 +18,8 @@ import {
   addProject,
   fetchCapacityBuildingPrograms,
   addCapacityBuildingPrograms,
+  fetchProjectByStatus,
+  fetchCapacityBuildingStatus,
 } from "./utils/api/ProjectManagementAPI";
 import ProjectListItem from "./components/Project/ProjectListItem";
 import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog";
@@ -49,6 +51,7 @@ const ProjectManagement = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [category, setCategory] = useState("Projects");
+  const [status, setStatus] = useState("All");
 
   const projectsPerPage = 10;
 
@@ -71,12 +74,22 @@ const ProjectManagement = () => {
 
         // Fetch data based on the selected category
         if (category === "Projects") {
-          data = await fetchProjects(token); // Fetch projects when category is "Projects"
+          // If status is "All", fetch all projects without status filter
+          if (status === "All") {
+            data = await fetchProjects(token); // Fetch all projects (no status filter)
+          } else {
+            data = await fetchProjectByStatus(token, status); // Fetch projects filtered by status
+          }
         } else if (category === "Capacity Building") {
-          data = await fetchCapacityBuildingPrograms(token); // Fetch capacity building programs when category is "Capacity Building"
+          // Fetch capacity building programs (no status filter for now)
+          if (status === "All") {
+            data = await fetchCapacityBuildingPrograms(token); // Fetch all programs (no status filter)
+          } else {
+            data = await fetchCapacityBuildingStatus(token, status); // Fetch based on status
+          }
         } else if (category === "Events") {
-          // For now, do nothing for "Events" category (you can add logic later if needed)
-          data = [];
+          // Placeholder for future "Events" category logic (status filter is not used yet)
+          data = []; // Temporarily empty
           console.log("Category: Events, no fetching logic implemented yet");
         }
 
@@ -98,7 +111,7 @@ const ProjectManagement = () => {
     };
 
     getProjects();
-  }, [page, token, category]);
+  }, [page, token, category, status]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -211,7 +224,7 @@ const ProjectManagement = () => {
       </Box>
 
       {/* Dropdown for Category */}
-      <FormControl variant="outlined" sx={{ marginBottom: 2, marginTop: 2 }}>
+      <FormControl variant="outlined" sx={{ marginBottom: 4, marginTop: 2 }}>
         <InputLabel>Category</InputLabel>
         <Select
           value={category}
@@ -222,6 +235,25 @@ const ProjectManagement = () => {
           <MenuItem value="Projects">Projects</MenuItem>
           <MenuItem value="Capacity Building">Capacity Building</MenuItem>
           <MenuItem value="Events">Events</MenuItem>
+        </Select>
+      </FormControl>
+
+      {/* Dropdown for Status */}
+      <FormControl
+        variant="outlined"
+        sx={{ marginBottom: 4, marginTop: 2, marginLeft: 2 }}
+      >
+        <InputLabel>Status</InputLabel>
+        <Select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          label="Status"
+          sx={dropdownStyles} // Apply same width as the Category dropdown
+        >
+          <MenuItem value="Ongoing">Ongoing</MenuItem>
+          <MenuItem value="Completed">Completed</MenuItem>
+          <MenuItem value="Pending">Pending</MenuItem>
+          <MenuItem value="All">All</MenuItem>
         </Select>
       </FormControl>
 

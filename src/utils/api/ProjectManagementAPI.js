@@ -165,3 +165,51 @@ export const addCapacityBuildingPrograms = async (newProject, token) => {
 
   return await response.json();
 };
+
+export const fetchProjectByStatus = async (token, status) => {
+  const url = `https://taranepal.onrender.com/api/projects/status/?status=${status}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`, // Use the provided token
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch projects");
+    }
+
+    const data = await response.json();
+    return data; // Return the response data
+  } catch (error) {
+    console.error("Error fetching project data:", error);
+    throw error; // Rethrow the error so it can be caught by the calling function
+  }
+};
+
+export const fetchCapacityBuildingStatus = async (token, status) => {
+  const url = `https://taranepal.onrender.com/api/capacity_building/status/?status=${status}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`, // Use the provided token
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch projects");
+    }
+
+    const data = await response.json();
+    return data; // Return the response data
+  } catch (error) {
+    console.error("Error fetching project data:", error);
+    throw error; // Rethrow the error so it can be caught by the calling function
+  }
+};
