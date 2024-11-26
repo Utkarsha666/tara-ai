@@ -15,6 +15,8 @@ import SuccessSnackbar from "./components/common/SuccessSnackbar";
 // Importing CircularLoading component
 import CircularLoading from "./components/common/CircularLoading";
 
+import ProjectDialog from "./components/Community/ProjectDialog";
+
 // Importing styles from the styles file
 import {
   bannerImageStyle,
@@ -35,6 +37,9 @@ const CommunityHub = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // State for snackbar visibility
   const [snackbarMessage, setSnackbarMessage] = useState(""); // State to hold snackbar message
   const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Severity level for the snackbar
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false); // State for the View Projects dialog
+  const [capacityBuildingDialogOpen, setCapacityBuildingDialogOpen] =
+    useState(false);
 
   // Fetch posts on component mount
   useEffect(() => {
@@ -77,6 +82,15 @@ const CommunityHub = () => {
     setSnackbarOpen(true); // Show the snackbar
   };
 
+  // Open the View Projects dialog
+  const handleOpenProjectDialog = () => setProjectDialogOpen(true);
+
+  // Close the View Projects dialog
+  const handleCloseProjectDialog = () => setProjectDialogOpen(false);
+
+  const handleOpenCapacityBuildingDialog = () =>
+    setCapacityBuildingDialogOpen(true);
+
   return (
     <Container maxWidth="lg" sx={{ padding: 3 }}>
       {/* Banner Image, displayed immediately */}
@@ -96,14 +110,22 @@ const CommunityHub = () => {
         </Box>
         <Box sx={cardStyles}>
           <WorkIcon sx={{ fontSize: 40, color: "#3f51b5" }} />
-          <Button variant="contained" sx={buttonStyles}>
+          <Button
+            variant="contained"
+            sx={buttonStyles}
+            onClick={handleOpenProjectDialog}
+          >
             View Projects
           </Button>
         </Box>
         <Box sx={cardStyles}>
           <SchoolIcon sx={{ fontSize: 40, color: "#3f51b5" }} />
-          <Button variant="contained" sx={buttonStyles}>
-            Capacity Building Program
+          <Button
+            variant="contained"
+            sx={buttonStyles}
+            onClick={handleOpenCapacityBuildingDialog}
+          >
+            View Capacity Building Programs
           </Button>
         </Box>
         <Box sx={cardStyles}>
@@ -132,7 +154,7 @@ const CommunityHub = () => {
         </Box>
       ) : (
         <>
-          <Typography variant="h4" sx={titleStyle}>
+          <Typography variant="h3" sx={titleStyle}>
             Community Posts
           </Typography>
 
@@ -169,6 +191,21 @@ const CommunityHub = () => {
         setPosts={setPosts}
         setError={setError}
         onPostSuccess={handlePostSuccess} // Pass the success callback
+      />
+
+      <ProjectDialog
+        open={projectDialogOpen}
+        onClose={handleCloseProjectDialog}
+        token={token}
+        type="project"
+      />
+
+      {/* Capacity Building Dialog */}
+      <ProjectDialog
+        open={capacityBuildingDialogOpen}
+        onClose={() => setCapacityBuildingDialogOpen(false)}
+        token={token}
+        type="capacityBuilding"
       />
 
       {/* Success Snackbar for showing success message */}

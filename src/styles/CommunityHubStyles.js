@@ -87,13 +87,12 @@ export const buttonStyles = {
 
 export const titleStyle = {
   fontSize: "2rem", // Increased font size for better prominence
-  fontWeight: 700, // Bolder weight for emphasis
+  fontWeight: 400, // Bolder weight for emphasis
   color: "#333",
   textAlign: "center",
   marginTop: "3rem", // Increased margin top to push it further down
   marginBottom: "2.5rem", // A little more space after the title
   letterSpacing: "1px", // Slight spacing between letters for a modern touch
-  textTransform: "uppercase", // Uppercase for a modern, bold look
 };
 
 export const errorStyle = {
