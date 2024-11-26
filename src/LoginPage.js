@@ -1,13 +1,33 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Container, TextField, Typography, Box, Snackbar } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
-import InfoIcon from "@mui/icons-material/Info";
 
 // Import the reusable GradientButton component
 import GradientButton from "./components/common/Button";
-import { fetchUserData } from "./utils/api/ProfilePageAPI"; // Import the fetchUserData function
+import { fetchUserData } from "./utils/api/ProfilePageAPI"; // Import the API functions
+import { requestAccessToken } from "./utils/api/LoginAPI";
+
+// Import styled components
+import {
+  ContainerBox,
+  LeftGrid,
+  RightGrid,
+  ImageContainer,
+  Image,
+  FormHeading,
+  InfoBar,
+  InfoBarIcon,
+  StyledTextField,
+  GradientButtonWrapper,
+} from "./styles/LoginStyles";
 
 const Alert = React.forwardRef((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -44,48 +64,23 @@ const LoginPage = () => {
         setServerInitializing(true);
       }, 12000);
 
-      // Step 1: Request the access token
-      const response = await fetch(
-        "https://taranepal.onrender.com/auth/token",
-        {
-          method: "POST",
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            grant_type: "password",
-            username: credentials.username,
-            password: credentials.password,
-            client_id: "string",
-            client_secret: "string",
-          }),
-        }
-      );
+      // Step 1: Request the access token using the API function
+      const accessToken = await requestAccessToken(credentials);
 
-      if (response.ok) {
-        const data = await response.json();
-        const accessToken = data.access_token; // The access token received
+      // Step 2: Use the access token to fetch user details (including id)
+      const userDetails = await fetchUserData(accessToken); // Get user data using the token
 
-        // Step 2: Use the access token to fetch user details (including id)
-        const userDetails = await fetchUserData(accessToken); // Get user data using the token
+      // Now that you have the user data (id, username, etc.), update the context
+      login(accessToken, {
+        username: credentials.username,
+        id: userDetails.id,
+      });
 
-        // Now that you have the user data (id, username, etc.), update the context
-        login(accessToken, {
-          username: credentials.username,
-          id: userDetails.id,
-        });
-
-        const redirectPath = location.state?.from || "/";
-        navigate(redirectPath);
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.detail || "Login failed");
-        setOpenSnackbar(true);
-      }
+      const redirectPath = location.state?.from || "/";
+      navigate(redirectPath);
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("An error occurred. Please try again.");
+      setErrorMessage(error.message);
       setOpenSnackbar(true);
     } finally {
       setLoading(false);
@@ -99,77 +94,62 @@ const LoginPage = () => {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: 4,
-          padding: 3,
-          borderRadius: 8,
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "white",
-          transition: "all 0.3s ease-in-out",
-          "&:hover": {
-            boxShadow: "0 15px 45px rgba(0, 0, 0, 0.15)",
-            transform: "scale(1.03)",
-          },
-        }}
-      >
-        <Typography variant="h5">Login</Typography>
-        <form onSubmit={handleSubmit} style={{ width: "100%", marginTop: 2 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Username"
-            name="username"
-            value={credentials.username}
-            onChange={handleChange}
-            variant="outlined"
-            autoComplete="off"
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            name="password"
-            type="password"
-            value={credentials.password}
-            onChange={handleChange}
-            variant="outlined"
-          />
-          {/* Use the reusable GradientButton component */}
-          <GradientButton loading={loading} type="submit">
-            Login
-          </GradientButton>
-        </form>
+    <Container maxWidth="xl">
+      <Grid container sx={{ height: "100%" }}>
+        {/* Left half (Login form) */}
+        <LeftGrid item xs={12} sm={6}>
+          <ContainerBox>
+            <FormHeading variant="h4">Login</FormHeading>
+            <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+              <StyledTextField
+                margin="normal"
+                required
+                fullWidth
+                label="Username"
+                name="username"
+                value={credentials.username}
+                onChange={handleChange}
+                variant="outlined"
+                autoComplete="off"
+              />
+              <StyledTextField
+                margin="normal"
+                required
+                fullWidth
+                label="Password"
+                name="password"
+                type="password"
+                value={credentials.password}
+                onChange={handleChange}
+                variant="outlined"
+              />
+              <GradientButtonWrapper>
+                <GradientButton loading={loading} type="submit">
+                  Login
+                </GradientButton>
+              </GradientButtonWrapper>
+            </form>
 
-        {/* Info bar */}
-        <Box
-          sx={{
-            marginTop: 2,
-            padding: 2,
-            borderRadius: 4,
-            backgroundColor: "#e3f2fd",
-            color: "#1e88e5",
-            textAlign: "center",
-            border: "1px solid #1e88e5",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <InfoIcon sx={{ marginRight: 1, color: "#1e88e5" }} />
-          <Typography variant="body2">
-            Clicking the login button activates the server, which may take up to
-            2 minutes to initialize. This will be resolved once a paid cloud
-            plan is purchased. Please use Google Chrome on PC; Firefox is not
-            supported.
-          </Typography>
-        </Box>
-      </Box>
+            {/* Info bar */}
+            <InfoBar>
+              <InfoBarIcon />
+              <Typography variant="body2">
+                Clicking the login button activates the server, which may take
+                some time to initialize. This will be resolved once a paid cloud
+                plan is purchased. Please use Google Chrome on PC; Firefox is
+                not supported.
+              </Typography>
+            </InfoBar>
+          </ContainerBox>
+        </LeftGrid>
+
+        {/* Right half (Image) */}
+        <RightGrid item xs={12} sm={6}>
+          <ImageContainer>
+            <Image src={require("./assets/images/Login.jpg")} alt="Login" />
+          </ImageContainer>
+        </RightGrid>
+      </Grid>
 
       <Snackbar
         open={openSnackbar}
@@ -193,7 +173,8 @@ const LoginPage = () => {
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="info">
-          Come back after 2 minutes, server will be up and Ready!!!
+          Server Initializing, will be ready and log you in, you can explore
+          other pages till then!!!
         </Alert>
       </Snackbar>
     </Container>
