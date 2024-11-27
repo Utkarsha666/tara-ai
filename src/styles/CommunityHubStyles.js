@@ -104,3 +104,49 @@ export const loadingStyle = {
   textAlign: "center",
   marginTop: "2rem",
 };
+
+export const sidebarStyle = {
+  width: "250px",
+  padding: 2,
+  background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)", // Light background color for light theme
+  boxShadow: "2px 0px 12px rgba(0, 0, 0, 0.1)", // Soft shadow for a clean, light feel
+  borderRadius: 10, // Rounded corners for a polished look
+  transition: "all 0.3s ease", // Smooth transition on hover
+  ":hover": {
+    boxShadow: "4px 0px 18px rgba(0, 0, 0, 0.15)", // Slightly deeper shadow on hover for depth
+  },
+};
+
+export const sidebarHeaderStyle = {
+  fontSize: "1.25rem",
+  fontWeight: 600,
+  color: "#333", // Dark color for the header
+  marginBottom: "1rem",
+  letterSpacing: "1px",
+};
+
+export const channelListItemStyle = {
+  marginBottom: 1,
+  padding: "10px 15px",
+  cursor: "pointer",
+  transition: "text-decoration 0.3s ease", // Smooth transition for color and underline
+  "&:hover": {
+    color: "#1976d2", // Blue color on hover to mimic hyperlink
+    textDecoration: "underline", // Underline text on hover like a hyperlink
+    backgroundColor: "transparent",
+  },
+};
+
+export const channelTextStyle = {
+  fontWeight: 500,
+  color: "#333", // Dark text color to ensure visibility against light background
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+};
+
+export const channelIconStyle = {
+  fontSize: "24px", // Slightly smaller icons for a cleaner look
+  color: "#1976d2", // Blue color for icons to match the hyperlink color
+  marginRight: "12px", // Space between icon and text
+};

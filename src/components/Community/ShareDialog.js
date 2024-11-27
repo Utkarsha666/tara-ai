@@ -7,8 +7,8 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { createPost } from "../../utils/api/CommunityAPI"; // Import createPost API function
-import { dialogStyles } from "../../styles/ShareDialogStyle"; // Import the updated dialog styles
+import { createPost } from "../../utils/api/CommunityAPI";
+import { dialogStyles } from "../../styles/ShareDialogStyle";
 
 const ShareDialog = ({
   open,
@@ -17,9 +17,10 @@ const ShareDialog = ({
   setPosts,
   setError,
   onPostSuccess,
+  selectedChannel, // Add selectedChannel prop
 }) => {
-  const [postTitle, setPostTitle] = useState(""); // State for post title
-  const [postContent, setPostContent] = useState(""); // State for post content
+  const [postTitle, setPostTitle] = useState("");
+  const [postContent, setPostContent] = useState("");
 
   // Handle creating a post
   const handleCreatePost = async () => {
@@ -30,7 +31,8 @@ const ShareDialog = ({
 
     try {
       const newPost = { title: postTitle, content: postContent };
-      const createdPost = await createPost(newPost, token);
+      // Pass the selectedChannel ID to the createPost function
+      const createdPost = await createPost(newPost, token, selectedChannel);
 
       // Add the newly created post to the top of the posts array
       setPosts((prevPosts) => [createdPost, ...prevPosts]);

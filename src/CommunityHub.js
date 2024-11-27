@@ -1,23 +1,33 @@
 import React, { useEffect, useState, useContext } from "react";
-import { fetchPosts } from "./utils/api/CommunityAPI"; // Import API function to fetch posts
-import PostCard from "./components/Community/PostCard"; // Import PostCard component
-import ShareDialog from "./components/Community/ShareDialog"; // Import ShareDialog component
+import {
+  fetchChannels,
+  fetchPosts,
+  createChannel,
+} from "./utils/api/CommunityAPI";
+import PostCard from "./components/Community/PostCard";
+import ShareDialog from "./components/Community/ShareDialog";
+import CreateChannelDialog from "./components/Community/CreateChannelDialog";
 import { AuthContext } from "./AuthContext";
-import { Box, Container, Typography, Button } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import WorkIcon from "@mui/icons-material/Work";
 import SchoolIcon from "@mui/icons-material/School";
+import ChatIcon from "@mui/icons-material/Chat";
+import LockIcon from "@mui/icons-material/Lock";
 
-// Importing the SuccessSnackbar component
 import SuccessSnackbar from "./components/common/SuccessSnackbar";
-
-// Importing CircularLoading component
 import CircularLoading from "./components/common/CircularLoading";
-
 import ProjectDialog from "./components/Community/ProjectDialog";
 
-// Importing styles from the styles file
 import {
   bannerImageStyle,
   boxStyles,
@@ -26,74 +36,129 @@ import {
   titleStyle,
   loadingStyle,
   errorStyle,
+  sidebarStyle,
+  channelListItemStyle,
+  channelIconStyle,
+  channelTextStyle,
+  sidebarHeaderStyle,
 } from "./styles/CommunityHubStyles";
 
 const CommunityHub = () => {
-  const { token, username } = useContext(AuthContext); // Consume the AuthContext to get token
-  const [posts, setPosts] = useState([]); // Ensure posts is an array
-  const [loading, setLoading] = useState(true); // State for loading
-  const [error, setError] = useState(null); // State for error
-  const [dialogOpen, setDialogOpen] = useState(false); // State for the dialog visibility
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for snackbar visibility
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // State to hold snackbar message
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // Severity level for the snackbar
-  const [projectDialogOpen, setProjectDialogOpen] = useState(false); // State for the View Projects dialog
+  const { token, username } = useContext(AuthContext);
+  const [channels, setChannels] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(false);
+  const [error, setError] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const [capacityBuildingDialogOpen, setCapacityBuildingDialogOpen] =
     useState(false);
+  const [selectedChannel, setSelectedChannel] = useState(null);
+  const [previousChannel, setPreviousChannel] = useState(null);
+  const [loadingChannels, setLoadingChannels] = useState(true);
+  const [createChannelDialogOpen, setCreateChannelDialogOpen] = useState(false);
 
-  // Fetch posts on component mount
+  /// Fetch channels when the token is available
   useEffect(() => {
     if (!token) return;
 
-    const getPosts = async () => {
+    const getChannels = async () => {
       try {
-        const data = await fetchPosts(token);
-        // Reverse posts array to display most recent first
+        setLoadingChannels(true);
+        const data = await fetchChannels(token);
+        setChannels(data);
+      } catch (err) {
+        setError("Failed to fetch channels");
+      } finally {
+        setLoadingChannels(false);
+      }
+    };
+
+    getChannels();
+  }, [token]);
+
+  // Fetch posts for the selected channel
+  useEffect(() => {
+    if (!selectedChannel || selectedChannel === previousChannel) return;
+
+    const getPostsData = async () => {
+      setLoadingPosts(true);
+      try {
+        const data = await fetchPosts(selectedChannel, token);
         setPosts(data.reverse());
       } catch (err) {
         setError("Failed to fetch posts");
       } finally {
-        setLoading(false);
+        setLoadingPosts(false);
       }
     };
 
-    getPosts();
-  }, [token]);
+    getPostsData();
+    setPreviousChannel(selectedChannel);
+  }, [selectedChannel, token, previousChannel]);
 
-  // Handle opening the dialog
   const handleOpenDialog = () => {
     setDialogOpen(true);
   };
 
-  // Handle closing the dialog
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
 
-  // Handle closing the snackbar
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
 
-  // Trigger snackbar with a success message
   const handlePostSuccess = () => {
     setSnackbarMessage("Post successfully created!");
     setSnackbarSeverity("success");
-    setSnackbarOpen(true); // Show the snackbar
+    setSnackbarOpen(true);
   };
 
-  // Open the View Projects dialog
   const handleOpenProjectDialog = () => setProjectDialogOpen(true);
 
-  // Close the View Projects dialog
   const handleCloseProjectDialog = () => setProjectDialogOpen(false);
 
   const handleOpenCapacityBuildingDialog = () =>
     setCapacityBuildingDialogOpen(true);
 
+  // Handle channel selection
+  const handleChannelClick = (channelId) => {
+    setSelectedChannel(channelId);
+  };
+
+  const handleOpenCreateChannelDialog = () => {
+    setCreateChannelDialogOpen(true);
+  };
+
+  const handleCloseCreateChannelDialog = () => {
+    setCreateChannelDialogOpen(false); // Close the Create Channel dialog
+  };
+
+  // Handle creating a new channel
+  const handleCreateChannel = async (name, visibility) => {
+    try {
+      // Call the API to create the new channel
+      const newChannel = await createChannel(name, visibility, token);
+      // Update the channels list with the newly created channel
+      setChannels((prevChannels) => [newChannel, ...prevChannels]);
+
+      // Close the dialog and show success message
+      handleCloseCreateChannelDialog();
+      setSnackbarMessage("Channel successfully created!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (err) {
+      setError("Failed to create channel");
+    }
+  };
+
   return (
     <Container maxWidth="lg" sx={{ padding: 3 }}>
-      {/* Banner Image, displayed immediately */}
+      {/* Banner Image */}
       <Box sx={bannerImageStyle} />
 
       {/* Horizontal Icon and Button Boxes */}
@@ -104,6 +169,7 @@ const CommunityHub = () => {
             variant="contained"
             sx={buttonStyles}
             onClick={handleOpenDialog}
+            disabled={!selectedChannel}
           >
             Share Post
           </Button>
@@ -136,52 +202,121 @@ const CommunityHub = () => {
         </Box>
       </Box>
 
-      {/* Error or Loading State */}
-      {loading ? (
-        <Box sx={loadingStyle}>
-          {/* Using CircularLoading instead of CircularProgress */}
-          <CircularLoading
-            size={60}
-            color="primary"
-            message="Loading posts..."
-          />
-        </Box>
-      ) : error ? (
-        <Box sx={loadingStyle}>
-          <Typography variant="h6" sx={errorStyle}>
-            {error}
-          </Typography>
-        </Box>
-      ) : (
-        <>
-          <Typography variant="h3" sx={titleStyle}>
-            Community Posts
-          </Typography>
-
+      {/* Main Layout with Sidebar and Posts */}
+      <Box sx={{ display: "flex", gap: 3 }}>
+        {/* Left Sidebar for Channels */}
+        <Box sx={sidebarStyle}>
           <Box
-            display="flex"
-            flexDirection="column"
-            gap={1}
-            sx={{ marginTop: 1 }}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 2,
+            }}
           >
-            {posts.length > 0 ? (
-              posts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  token={token}
-                  setError={setError}
-                  username={username}
-                />
-              ))
-            ) : (
-              <Typography variant="body1" color="textSecondary">
-                No posts available.
-              </Typography>
-            )}
+            <Typography sx={sidebarHeaderStyle}>Channels</Typography>
+            {/* Hyperlink for "Add Channel" */}
+            <Typography
+              component="a"
+              href="#"
+              onClick={handleOpenCreateChannelDialog}
+              sx={{
+                textDecoration: "none",
+                color: "#3f51b5", // Customize color as needed
+                fontWeight: "bold",
+                cursor: "pointer",
+                fontSize: "16px",
+              }}
+            >
+              Add Channel
+            </Typography>
           </Box>
-        </>
-      )}
+
+          {loadingChannels ? (
+            <Box sx={{ display: "flex", justifyContent: "center", padding: 3 }}>
+              <CircularLoading
+                size={40}
+                color="primary"
+                message="Loading Channels..."
+              />
+            </Box>
+          ) : (
+            <List>
+              {channels.length > 0 ? (
+                channels.map((channel) => (
+                  <ListItem
+                    button
+                    key={channel.id}
+                    sx={channelListItemStyle}
+                    onClick={() => handleChannelClick(channel.id)}
+                  >
+                    <ChatIcon sx={channelIconStyle} />
+                    <ListItemText
+                      primary={channel.name}
+                      sx={channelTextStyle}
+                    />
+                    {channel.visibility === "private" && (
+                      <LockIcon sx={{ color: "#ff5722", marginLeft: 1 }} />
+                    )}
+                  </ListItem>
+                ))
+              ) : (
+                <Typography variant="body1" color="textSecondary">
+                  No channels available.
+                </Typography>
+              )}
+            </List>
+          )}
+        </Box>
+
+        {/* Right Section for Community Posts */}
+        <Box sx={{ flex: 1 }}>
+          {selectedChannel && loadingPosts ? (
+            <Box sx={loadingStyle}>
+              <CircularLoading
+                size={60}
+                color="primary"
+                message="Loading posts..."
+              />
+            </Box>
+          ) : error ? (
+            <Box sx={loadingStyle}>
+              <Typography variant="h6" sx={errorStyle}>
+                {error}
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <Typography variant="h3" sx={titleStyle}>
+                {channels.find((channel) => channel.id === selectedChannel)
+                  ?.name || "Community Posts"}
+              </Typography>
+
+              <Box
+                display="flex"
+                flexDirection="column"
+                gap={1}
+                sx={{ marginTop: 1 }}
+              >
+                {posts.length > 0 ? (
+                  posts.map((post) => (
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      token={token}
+                      setError={setError}
+                      username={username}
+                    />
+                  ))
+                ) : (
+                  <Typography variant="body1" color="textSecondary">
+                    No posts available for this channel.
+                  </Typography>
+                )}
+              </Box>
+            </>
+          )}
+        </Box>
+      </Box>
 
       {/* Share Dialog for creating a new post */}
       <ShareDialog
@@ -190,7 +325,15 @@ const CommunityHub = () => {
         token={token}
         setPosts={setPosts}
         setError={setError}
-        onPostSuccess={handlePostSuccess} // Pass the success callback
+        onPostSuccess={handlePostSuccess}
+        selectedChannel={selectedChannel}
+      />
+
+      {/* Create Channel Dialog */}
+      <CreateChannelDialog
+        open={createChannelDialogOpen}
+        onClose={handleCloseCreateChannelDialog}
+        onCreateChannel={handleCreateChannel}
       />
 
       <ProjectDialog
@@ -200,7 +343,6 @@ const CommunityHub = () => {
         type="project"
       />
 
-      {/* Capacity Building Dialog */}
       <ProjectDialog
         open={capacityBuildingDialogOpen}
         onClose={() => setCapacityBuildingDialogOpen(false)}
@@ -208,7 +350,7 @@ const CommunityHub = () => {
         type="capacityBuilding"
       />
 
-      {/* Success Snackbar for showing success message */}
+      {/* Success Snackbar */}
       <SuccessSnackbar
         open={snackbarOpen}
         onClose={handleCloseSnackbar}

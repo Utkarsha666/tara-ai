@@ -1,21 +1,71 @@
-// Fetch all posts
-export const fetchPosts = async (token) => {
-  const response = await fetch(
-    "https://taranepal.onrender.com/api/community/posts/",
-    {
+const API_URL = "https://taranepal.onrender.com/api";
+
+// Function to fetch channels
+export const fetchChannels = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/channels/`, {
       method: "GET",
       headers: {
-        Accept: "application/json",
+        accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
+    });
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch channels");
     }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch posts");
+  } catch (err) {
+    throw new Error("Failed to fetch channels: " + err.message);
   }
+};
 
-  return response.json();
+export const createChannel = async (name, visibility, token) => {
+  try {
+    const response = await fetch(
+      "https://taranepal.onrender.com/api/channels/",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          visibility,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      return await response.json(); // Return the created channel data
+    } else {
+      throw new Error("Failed to create channel");
+    }
+  } catch (err) {
+    throw new Error("Failed to create channel: " + err.message);
+  }
+};
+
+// Function to fetch posts by channel ID
+export const fetchPosts = async (channelId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/channels/${channelId}/posts/`, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error("Failed to fetch posts");
+    }
+  } catch (err) {
+    throw new Error("Failed to fetch posts: " + err.message);
+  }
 };
 
 // Fetch user data by username
@@ -39,9 +89,9 @@ export const fetchUserData = async (username, token) => {
 };
 
 // Create a new post
-export const createPost = async (newPost, token) => {
+export const createPost = async (newPost, token, channelId) => {
   const response = await fetch(
-    "https://taranepal.onrender.com/api/community/posts/",
+    `https://taranepal.onrender.com/api/channels/${channelId}/posts/`,
     {
       method: "POST",
       headers: {

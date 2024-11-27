@@ -9,7 +9,7 @@ export const PostCardWrapper = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   padding: theme.spacing(2),
   background: "#fff", // Lighter gradient
-  borderRadius: "6%", // Rounded corners for the entire post card
+  borderRadius: 30, // Rounded corners for the entire post card
   boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
   transition: "all 0.3s ease-in-out",
   maxWidth: "750px",
@@ -94,7 +94,7 @@ export const CommentInput = styled(TextareaAutosize)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(2),
   marginTop: theme.spacing(2),
-  borderRadius: "16px", // Rounded input field
+  borderRadius: 10, // Rounded input field
   border: "1px solid #ddd", // Light border
   backgroundColor: "#fff", // White background for input
   fontSize: "1rem",

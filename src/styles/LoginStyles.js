@@ -10,7 +10,7 @@ export const ContainerBox = styled(Box)({
   flexDirection: "column",
   alignItems: "center",
   padding: "2rem",
-  borderRadius: 100,
+  borderRadius: 50,
   boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
   backgroundColor: "white",
   width: "80%",
@@ -43,7 +43,7 @@ export const ImageContainer = styled(Box)({
   width: "100%",
   height: "100%",
   overflow: "hidden",
-  borderRadius: 100,
+  borderRadius: 50,
 });
 
 export const Image = styled("img")({
@@ -63,7 +63,7 @@ export const FormHeading = styled(Typography)({
 export const InfoBar = styled(Box)({
   marginTop: "1rem",
   padding: "1rem",
-  borderRadius: 50,
+  borderRadius: 30,
   backgroundColor: "#e3f2fd",
   color: "#1e88e5",
   textAlign: "center",
