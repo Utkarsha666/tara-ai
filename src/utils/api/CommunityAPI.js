@@ -3,7 +3,7 @@ const API_URL = "https://taranepal.onrender.com/api";
 // Function to fetch channels
 export const fetchChannels = async (token) => {
   try {
-    const response = await fetch(`${API_URL}/channels/`, {
+    const response = await fetch(`${API_URL}/community/channels/`, {
       method: "GET",
       headers: {
         accept: "application/json",
@@ -23,7 +23,7 @@ export const fetchChannels = async (token) => {
 export const createChannel = async (name, visibility, token) => {
   try {
     const response = await fetch(
-      "https://taranepal.onrender.com/api/channels/",
+      "https://taranepal.onrender.com/api/community/channels/",
       {
         method: "POST",
         headers: {
@@ -51,13 +51,16 @@ export const createChannel = async (name, visibility, token) => {
 // Function to fetch posts by channel ID
 export const fetchPosts = async (channelId, token) => {
   try {
-    const response = await fetch(`${API_URL}/channels/${channelId}/posts/`, {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/community/channels/${channelId}/posts/`,
+      {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     if (response.ok) {
       return await response.json();
     } else {
@@ -91,7 +94,7 @@ export const fetchUserData = async (username, token) => {
 // Create a new post
 export const createPost = async (newPost, token, channelId) => {
   const response = await fetch(
-    `https://taranepal.onrender.com/api/channels/${channelId}/posts/`,
+    `https://taranepal.onrender.com/api/community/channels/${channelId}/posts/`,
     {
       method: "POST",
       headers: {
