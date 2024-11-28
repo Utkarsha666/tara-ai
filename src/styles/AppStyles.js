@@ -33,7 +33,7 @@ const appStyles = {
     left: 0,
     width: "200px",
     height: "calc(100% - 70px)",
-    background: (theme) => theme.palette.primary.main,
+    background: "linear-gradient(135deg, #005f7f, #003c5b)",
     color: "white",
     padding: 2,
     boxShadow: 3,
