@@ -50,11 +50,19 @@ const theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          backgroundColor: "#005f7f", // Set background to white
-          color: "white", // Set text color to dark (primary color for contrast)
+          backgroundColor: "#005f7f", // Set background to custom color
+          color: "white", // Set text color to white
           "&:hover": {
-            backgroundColor: "#005f7f", // Hover background in primary color
-            color: "white", // Ensure the text is white on hover for visibility
+            backgroundColor: "#003c5b", // Hover background in primary color
+            color: "white", // Ensure the text is black on hover for contrast
+          },
+          "&.Mui-selected": {
+            backgroundColor: "white", // Adjust selected background to match hover
+            color: "#003c5b", // Ensure the text remains visible when selected
+          },
+          "&.Mui-selected:hover": {
+            backgroundColor: "#003c5b", // Darken the selected state on hover for contrast
+            color: "white", // Keep the text white
           },
         },
       },
