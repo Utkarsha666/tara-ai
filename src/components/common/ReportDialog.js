@@ -31,8 +31,8 @@ const ReportDialog = ({ reportData, dialogOpen, handleCloseDialog }) => {
     >
       <DialogTitle
         sx={{
-          backgroundColor: "#1976d2",
-          color: "white",
+          backgroundColor: "#f5f5f5",
+          color: "black",
           fontWeight: "bold",
           textAlign: "center",
           padding: "16px 0",

@@ -34,7 +34,6 @@ const appStyles = {
     width: "200px",
     height: "calc(100% - 70px)",
     background: (theme) => theme.palette.primary.main,
-    backdropFilter: "blur(100px)",
     color: "white",
     padding: 2,
     boxShadow: 3,

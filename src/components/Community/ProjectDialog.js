@@ -65,7 +65,7 @@ const ProjectDialog = ({ open, onClose, token, type }) => {
   return (
     <>
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ backgroundColor: "#3f51b5", color: "#fff" }}>
+        <DialogTitle sx={{ backgroundColor: "#f5f5f5", color: "#111" }}>
           Ongoing Projects
         </DialogTitle>
         <DialogContent sx={{ backgroundColor: "#f5f5f5", padding: 3 }}>

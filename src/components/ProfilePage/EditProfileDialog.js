@@ -93,10 +93,10 @@ const EditProfileDialog = ({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleDialogClose} color="secondary">
+        <Button onClick={handleDialogClose} color="primary" variant="contained">
           Cancel
         </Button>
-        <Button onClick={handleSaveProfile} color="primary">
+        <Button onClick={handleSaveProfile} color="primary" variant="contained">
           Save
         </Button>
       </DialogActions>

@@ -34,6 +34,7 @@ import SuccessSnackbar from "./components/common/SuccessSnackbar";
 import CircularLoading from "./components/common/CircularLoading";
 import ProjectDialog from "./components/Community/ProjectDialog";
 import ChannelMembersDialog from "./components/Community/ChannelMembersDialog";
+import AddChannelMemberDialog from "./components/Community/AddChannelMemberDialog";
 
 import {
   bannerImageStyle,
@@ -199,7 +200,7 @@ const CommunityHub = () => {
   };
 
   // Function to handle adding a user to the channel
-  const handleAddMember = async () => {
+  const handleAddMember = async (newUsername) => {
     if (!newUsername) return; // Don't submit if the username is empty
 
     try {
@@ -208,7 +209,6 @@ const CommunityHub = () => {
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
       setAddMemberDialogOpen(false);
-      setNewUsername(""); // Clear input after successful submission
     } catch (err) {
       setError("Failed to add member.");
     }
@@ -456,27 +456,11 @@ const CommunityHub = () => {
       />
 
       {/* Add Member Dialog */}
-      <Dialog open={addMemberDialogOpen} onClose={handleAddMemberDialogClose}>
-        <DialogContent>
-          <Typography variant="h6">Add Member to Channel</Typography>
-          <TextField
-            label="Username"
-            variant="outlined"
-            fullWidth
-            value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
-            sx={{ marginTop: 2 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddMemberDialogClose} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddMember} color="primary">
-            Add Member
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddChannelMemberDialog
+        open={addMemberDialogOpen}
+        onClose={handleAddMemberDialogClose}
+        onAddMember={handleAddMember}
+      />
 
       {/* Success Snackbar */}
       <SuccessSnackbar

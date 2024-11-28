@@ -16,7 +16,7 @@ const GradientButton = ({ loading, children, ...props }) => {
         padding: "10px 20px",
         "&:hover": {
           background: "linear-gradient(135deg, #003c5b 0%, #005f7f 100%)", // Hover gradient
-          transform: "scale(1.05)", // Slight scale on hover
+          transform: "scale(1)", // Slight scale on hover
           transition: "all 0.3s ease",
         },
         disabled: loading,

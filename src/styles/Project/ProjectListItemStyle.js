@@ -15,8 +15,8 @@ export const StyledCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[5],
   borderLeft: `6px solid ${theme.palette.primary.main}`,
   backgroundColor: theme.palette.background.paper,
-  width: "100%", // Make it full-width
-  maxWidth: "100%", // Ensures full-width without restriction
+  width: "100%",
+  maxWidth: "100%",
   display: "flex",
   flexDirection: "column",
   "&:hover": {
@@ -27,7 +27,8 @@ export const StyledCard = styled(Card)(({ theme }) => ({
 
 // Styled Card Content with padding and spacing
 export const StyledCardContent = styled(CardContent)(({ theme }) => ({
-  padding: theme.spacing(1), // Increased padding
+  padding: theme.spacing(1),
+  background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)",
   display: "flex",
   flexDirection: "column",
 }));
@@ -66,12 +67,12 @@ export const Label = styled(Typography)(({ theme }) => ({
 // Styled Chip for Objectives (Tags)
 export const ObjectiveTag = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.grey[200], // Light background for tags
+  backgroundColor: "#aaa", // Light background for tags
   color: theme.palette.text.primary, // Text color for tags
   fontWeight: 600,
   borderRadius: 16, // Rounded corners
   "&:hover": {
-    backgroundColor: theme.palette.grey[300], // Darker on hover
+    backgroundColor: "#999", // Darker on hover
   },
 }));
 

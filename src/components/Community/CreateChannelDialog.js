@@ -104,7 +104,7 @@ const CreateChannelDialog = ({ open, onClose, onCreateChannel }) => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <StyledButton onClick={onClose} variant="outlined" color="secondary">
+        <StyledButton onClick={onClose} variant="contained" color="primary">
           Cancel
         </StyledButton>
         <StyledButton
