@@ -3,6 +3,8 @@ import {
   fetchChannels,
   fetchPosts,
   createChannel,
+  fetchChannelMembers,
+  addUserToChannel,
 } from "./utils/api/CommunityAPI";
 import PostCard from "./components/Community/PostCard";
 import ShareDialog from "./components/Community/ShareDialog";
@@ -16,6 +18,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
 import EventNoteIcon from "@mui/icons-material/EventNote";
@@ -27,6 +33,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import SuccessSnackbar from "./components/common/SuccessSnackbar";
 import CircularLoading from "./components/common/CircularLoading";
 import ProjectDialog from "./components/Community/ProjectDialog";
+import ChannelMembersDialog from "./components/Community/ChannelMembersDialog";
 
 import {
   bannerImageStyle,
@@ -59,7 +66,14 @@ const CommunityHub = () => {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [previousChannel, setPreviousChannel] = useState(null);
   const [loadingChannels, setLoadingChannels] = useState(true);
+  const [loadingMembers, setLoadingMembers] = useState(false);
   const [createChannelDialogOpen, setCreateChannelDialogOpen] = useState(false);
+  // New state for members and dialog
+  const [members, setMembers] = useState([]);
+  const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  // New state for "Add Member" form
+  const [addMemberDialogOpen, setAddMemberDialogOpen] = useState(false);
+  const [newUsername, setNewUsername] = useState("");
 
   /// Fetch channels when the token is available
   useEffect(() => {
@@ -100,6 +114,26 @@ const CommunityHub = () => {
     setPreviousChannel(selectedChannel);
   }, [selectedChannel, token, previousChannel]);
 
+  // Function to fetch channel members
+  const fetchMembers = async (channelId) => {
+    setMembersDialogOpen(true);
+    setLoadingMembers(true);
+    try {
+      const data = await fetchChannelMembers(channelId, token);
+      setMembers(data);
+    } catch (err) {
+      setError("Failed to fetch members");
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (membersDialogOpen && selectedChannel) {
+      fetchMembers(selectedChannel); // Pass selectedChannel to fetchMembers
+    }
+  }, [membersDialogOpen, selectedChannel]);
+
   const handleOpenDialog = () => {
     setDialogOpen(true);
   };
@@ -135,7 +169,7 @@ const CommunityHub = () => {
   };
 
   const handleCloseCreateChannelDialog = () => {
-    setCreateChannelDialogOpen(false); // Close the Create Channel dialog
+    setCreateChannelDialogOpen(false);
   };
 
   // Handle creating a new channel
@@ -153,6 +187,30 @@ const CommunityHub = () => {
       setSnackbarOpen(true);
     } catch (err) {
       setError("Failed to create channel");
+    }
+  };
+
+  const handleAddMemberDialogOpen = () => {
+    setAddMemberDialogOpen(true);
+  };
+
+  const handleAddMemberDialogClose = () => {
+    setAddMemberDialogOpen(false);
+  };
+
+  // Function to handle adding a user to the channel
+  const handleAddMember = async () => {
+    if (!newUsername) return; // Don't submit if the username is empty
+
+    try {
+      await addUserToChannel(selectedChannel, newUsername, token); // Call API to add user
+      setSnackbarMessage(`${newUsername} has been added to the channel.`);
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      setAddMemberDialogOpen(false);
+      setNewUsername(""); // Clear input after successful submission
+    } catch (err) {
+      setError("Failed to add member.");
     }
   };
 
@@ -221,7 +279,7 @@ const CommunityHub = () => {
               onClick={handleOpenCreateChannelDialog}
               sx={{
                 textDecoration: "none",
-                color: "#3f51b5", // Customize color as needed
+                color: "#3f51b5",
                 fontWeight: "bold",
                 cursor: "pointer",
                 fontSize: "16px",
@@ -286,17 +344,54 @@ const CommunityHub = () => {
             </Box>
           ) : (
             <>
+              {selectedChannel &&
+                channels.find((channel) => channel.id === selectedChannel)
+                  ?.visibility === "private" && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      marginBottom: 2,
+                    }}
+                  >
+                    <Typography
+                      component="a"
+                      href="#"
+                      onClick={() => fetchMembers(selectedChannel)}
+                      sx={{
+                        textDecoration: "underline",
+                        color: "#3f51b5",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      View Members
+                    </Typography>
+
+                    {/* Add Member Link */}
+                    <Typography
+                      component="a"
+                      href="#"
+                      onClick={handleAddMemberDialogOpen} // Opens the "Add Member" dialog
+                      sx={{
+                        textDecoration: "underline",
+                        color: "#3f51b5",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        marginLeft: 2, // Adds space between the links
+                      }}
+                    >
+                      Add Member
+                    </Typography>
+                  </Box>
+                )}
+
               <Typography variant="h3" sx={titleStyle}>
                 {channels.find((channel) => channel.id === selectedChannel)
-                  ?.name || "Community Posts"}
+                  ?.name || "Channels"}
               </Typography>
 
-              <Box
-                display="flex"
-                flexDirection="column"
-                gap={1}
-                sx={{ marginTop: 1 }}
-              >
+              <Box sx={boxStyles}>
                 {posts.length > 0 ? (
                   posts.map((post) => (
                     <PostCard
@@ -309,7 +404,7 @@ const CommunityHub = () => {
                   ))
                 ) : (
                   <Typography variant="body1" color="textSecondary">
-                    No posts available for this channel.
+                    No posts.
                   </Typography>
                 )}
               </Box>
@@ -349,6 +444,39 @@ const CommunityHub = () => {
         token={token}
         type="capacityBuilding"
       />
+
+      {/* Dialog for Members */}
+      <ChannelMembersDialog
+        membersDialogOpen={membersDialogOpen}
+        setMembersDialogOpen={setMembersDialogOpen}
+        members={members}
+        loading={loadingMembers}
+        error={error}
+        token={token}
+      />
+
+      {/* Add Member Dialog */}
+      <Dialog open={addMemberDialogOpen} onClose={handleAddMemberDialogClose}>
+        <DialogContent>
+          <Typography variant="h6">Add Member to Channel</Typography>
+          <TextField
+            label="Username"
+            variant="outlined"
+            fullWidth
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            sx={{ marginTop: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAddMemberDialogClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddMember} color="primary">
+            Add Member
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Success Snackbar */}
       <SuccessSnackbar

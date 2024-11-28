@@ -20,6 +20,7 @@ export const bannerImageStyle = {
 
 export const boxStyles = {
   display: "flex",
+  background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)",
   justifyContent: "space-between",
   gap: 1,
   marginBottom: 4,

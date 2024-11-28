@@ -134,3 +134,53 @@ export const addComment = async (postId, comment, token) => {
 
   return response.json();
 };
+
+// Function to fetch members of a channel
+export const fetchChannelMembers = async (channelId, token) => {
+  try {
+    // API URL with channelId in the path
+    const response = await fetch(
+      `https://taranepal.onrender.com/api/community/channels/${channelId}/members/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Authentication header
+        },
+      }
+    );
+
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error("Failed to fetch members");
+    }
+
+    // Parse the JSON response
+    const data = await response.json();
+
+    return data; // This will be the list of member usernames
+  } catch (error) {
+    console.error("Error fetching channel members:", error);
+    throw error; // Propagate the error to be handled by the calling function
+  }
+};
+
+// Function to add a user to a channel
+export const addUserToChannel = async (channelId, username, token) => {
+  const response = await fetch(
+    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/?username=${username}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to add user to channel");
+  }
+
+  return response.json(); // Return the response body (channel data)
+};

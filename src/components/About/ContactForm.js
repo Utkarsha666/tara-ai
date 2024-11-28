@@ -41,10 +41,10 @@ const ContactForm = ({ handleSnackbar }) => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        width: { xs: "100%", sm: "60%", md: "50%" },
+        width: { xs: "100%", sm: "60%", md: "60%" },
         margin: "auto",
         padding: 4,
-        backgroundColor: "#fff",
+        background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)",
         borderRadius: 8,
         boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)",
         marginBottom: 4,
@@ -78,7 +78,7 @@ const ContactForm = ({ handleSnackbar }) => {
             fontSize: "1.1rem",
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#ddd",
+            borderColor: "#aaa",
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "#5C6BC0",
@@ -105,7 +105,7 @@ const ContactForm = ({ handleSnackbar }) => {
             fontSize: "1.1rem",
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#ddd",
+            borderColor: "#aaa",
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "#5C6BC0",
@@ -133,7 +133,7 @@ const ContactForm = ({ handleSnackbar }) => {
             fontSize: "1.1rem",
           },
           "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: "#ddd",
+            borderColor: "#aaa",
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: "#5C6BC0",

@@ -13,7 +13,7 @@ const commonBoxStyles = {
   padding: 3,
   borderRadius: 16,
   boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-  backgroundColor: "white",
+  background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)",
   transition: "all 0.3s ease-in-out",
   "&:hover": {
     boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",

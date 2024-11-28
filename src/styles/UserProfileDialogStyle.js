@@ -30,7 +30,7 @@ export const StyledDialogTitle = styled(DialogTitle)(({ theme }) => ({
 // Dialog Content
 export const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
   padding: theme.spacing(3),
-  background: "#fff",
+  background: "white",
   borderBottomLeftRadius: theme.spacing(2),
   borderBottomRightRadius: theme.spacing(2),
 }));

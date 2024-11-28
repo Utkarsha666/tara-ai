@@ -8,7 +8,7 @@ export const PostCardWrapper = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
   marginBottom: theme.spacing(2),
   padding: theme.spacing(2),
-  background: "#fff", // Lighter gradient
+  background: "linear-gradient(145deg, #f0f4f7, #c9d6e3)", // Lighter gradient
   borderRadius: 30, // Rounded corners for the entire post card
   boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",
   transition: "all 0.3s ease-in-out",
