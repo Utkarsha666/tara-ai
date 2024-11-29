@@ -27,9 +27,9 @@ const Report = () => {
   const [loadingReportGeneration, setLoadingReportGeneration] = useState(false);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [topic, setTopic] = useState(
-    "The Role of Nepal's Indigenous Communities in Climate Action and Conservation"
+    "Wind and Solar Energy Solutions for Rural and Remote Areas"
   );
-  const [maxAnalysts, setMaxAnalysts] = useState(1);
+  const [maxAnalysts, setMaxAnalysts] = useState(3);
   const [feedback, setFeedback] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
@@ -121,7 +121,7 @@ const Report = () => {
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
-        Report
+        AI-Powered Research Assistant
       </Typography>
 
       <ReportForm

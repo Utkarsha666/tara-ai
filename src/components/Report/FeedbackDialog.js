@@ -24,7 +24,9 @@ const FeedbackDialog = ({
   onSubmitFeedback,
   loading,
 }) => {
-  const [feedback, setFeedback] = useState("Add Country Director from NGO");
+  const [feedback, setFeedback] = useState(
+    "Add a community leader from rural Nepal"
+  );
 
   const handleSubmit = () => {
     onSubmitFeedback(feedback);

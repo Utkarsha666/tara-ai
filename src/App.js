@@ -277,7 +277,11 @@ const App = () => {
                   icon: <DashboardIcon />,
                   text: "Dashboard",
                 },
-                { to: "/report", icon: <AssessmentIcon />, text: "Report" },
+                {
+                  to: "/report",
+                  icon: <AssessmentIcon />,
+                  text: "Research Assistant",
+                },
                 {
                   to: "/impact-points",
                   icon: <ImpactIcon />,
