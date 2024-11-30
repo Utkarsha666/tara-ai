@@ -117,6 +117,7 @@ const App = () => {
       const projectId = notification.project_id;
       const channelId = notification.channel_id;
       const channelName = notification.channel_name;
+      const notificationType = notification.notification_type;
 
       const response = await markNotificationAsRead(userId, notification.id);
 
@@ -147,8 +148,15 @@ const App = () => {
         }
 
         // Fetch the project data if project_id exists
-        if (projectId && projectId !== "None") {
+        if (notification.notification_type == "PROJECT") {
           fetchedProjectData = await fetchProjectDetails(projectId, token);
+          setNotificationType(notificationType);
+        } else if (notification.notification_type == "CAPACITY_BUILDING") {
+          fetchedProjectData = await fetchCapacityBuildingProgramsDetails(
+            projectId,
+            token
+          );
+          setNotificationType(notificationType);
         }
 
         // Update the sidebar to display the post, comment, or project
@@ -197,7 +205,7 @@ const App = () => {
   };
 
   const openProjectDialog = (project) => {
-    setSelectedProjectId(project.id);
+    setSelectedProjectId(project);
     setIsDialogOpen(true);
   };
 

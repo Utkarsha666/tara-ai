@@ -94,7 +94,10 @@ const NotificationSidebar = ({
             <Box sx={{ marginBottom: 2 }}>
               <ProjectListItem
                 project={projectData}
-                onClick={() => openProjectDialog(projectData)}
+                onClick={() => {
+                  console.log(projectData);
+                  openProjectDialog(projectData.id);
+                }}
               />
             </Box>
           )}

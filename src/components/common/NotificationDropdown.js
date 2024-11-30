@@ -97,6 +97,8 @@ const NotificationDropdown = ({
                     ? `${notification.tagged_by} has assigned you a project.`
                     : notification.notification_type === "CHANNEL"
                     ? `${notification.tagged_by} has added you ${notification.channel_name}`
+                    : notification.notification_type === "CAPACITY_BUILDING"
+                    ? `${notification.tagged_by} has assigned you a program`
                     : "You have a new notification."}
                 </Typography>
                 <Typography

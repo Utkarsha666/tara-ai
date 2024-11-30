@@ -12,7 +12,6 @@ import {
 
 const ProjectListItem = ({ project, onClick }) => {
   const handleClick = () => {
-    console.log("Project clicked:", project.id);
     onClick();
   };
 
