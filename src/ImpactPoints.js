@@ -101,7 +101,7 @@ const ImpactPoints = () => {
   return (
     <Container>
       <DashboardTitle variant="h4" gutterBottom>
-        Impact Points Dashboard
+        M&E Dashboard
       </DashboardTitle>
 
       {/* Show loading sign if data is still being fetched */}

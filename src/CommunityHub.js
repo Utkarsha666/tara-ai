@@ -86,7 +86,9 @@ const CommunityHub = () => {
         const data = await fetchChannels(token);
         setChannels(data);
       } catch (err) {
-        setError("Failed to fetch channels");
+        setSnackbarMessage("failed, to fetch channels");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       } finally {
         setLoadingChannels(false);
       }
@@ -105,7 +107,9 @@ const CommunityHub = () => {
         const data = await fetchPosts(selectedChannel, token);
         setPosts(data.reverse());
       } catch (err) {
-        setError("Failed to fetch posts");
+        setSnackbarMessage("failed, to fetch posts");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
       } finally {
         setLoadingPosts(false);
       }
@@ -123,7 +127,9 @@ const CommunityHub = () => {
       const data = await fetchChannelMembers(channelId, token);
       setMembers(data);
     } catch (err) {
-      setError("Failed to fetch members");
+      setSnackbarMessage("failed, to fetch members");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     } finally {
       setLoadingMembers(false);
     }
@@ -187,7 +193,9 @@ const CommunityHub = () => {
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } catch (err) {
-      setError("Failed to create channel");
+      setSnackbarMessage("Channel creation failed");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -210,7 +218,11 @@ const CommunityHub = () => {
       setSnackbarOpen(true);
       setAddMemberDialogOpen(false);
     } catch (err) {
-      setError("Failed to add member.");
+      setSnackbarMessage(
+        "failed, make sure the username is not already in the team"
+      );
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -404,7 +416,7 @@ const CommunityHub = () => {
                   ))
                 ) : (
                   <Typography variant="body1" color="textSecondary">
-                    No posts.
+                    ...
                   </Typography>
                 )}
               </Box>

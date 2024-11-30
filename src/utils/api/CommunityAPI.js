@@ -166,15 +166,16 @@ export const fetchChannelMembers = async (channelId, token) => {
 };
 
 // Function to add a user to a channel
-export const addUserToChannel = async (channelId, username, token) => {
+export const addUserToChannel = async (channelId, usernames, token) => {
   const response = await fetch(
-    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/?username=${username}`,
+    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(usernames), // Send usernames as JSON array in request body
     }
   );
 

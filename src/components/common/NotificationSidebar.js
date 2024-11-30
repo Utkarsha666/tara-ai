@@ -3,7 +3,8 @@ import { Box, Divider, Typography, IconButton } from "@mui/material";
 import PostCard from "../Community/PostCard";
 import ProjectListItem from "../Project/ProjectListItem";
 import CloseIcon from "@mui/icons-material/Close";
-import CircularLoading from "../common/CircularLoading"; // Import CircularLoading component
+import CircularLoading from "../common/CircularLoading";
+import LockIcon from "@mui/icons-material/Lock";
 
 const NotificationSidebar = ({
   sidebarPost,
@@ -14,11 +15,13 @@ const NotificationSidebar = ({
   setError,
   projectData,
   closeSidebar,
-  openProjectDialog, // Function to open the project dialog
-  isLoading, // New prop for loading state
+  openProjectDialog,
+  isLoading,
+  sidebarMessage,
 }) => {
   // If no post or project data and sidebar is not loading, return null
-  if (!sidebarPost && !projectData && !isLoading) return null;
+  if (!sidebarPost && !projectData && !isLoading && !sidebarMessage)
+    return null;
 
   return (
     <Box
@@ -93,6 +96,32 @@ const NotificationSidebar = ({
                 project={projectData}
                 onClick={() => openProjectDialog(projectData)}
               />
+            </Box>
+          )}
+
+          {/* If sidebarMessage is available, render it */}
+          {sidebarMessage && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                backgroundColor: "#F4F8FF", // Light blue background similar to Slack
+                padding: 2,
+                borderRadius: "8px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                marginBottom: 2,
+              }}
+            >
+              {/* Lock Icon */}
+              <LockIcon sx={{ color: "#888", marginRight: 1 }} />
+
+              {/* Message Text */}
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: 500, color: "#333", textAlign: "center" }}
+              >
+                {sidebarMessage}
+              </Typography>
             </Box>
           )}
         </>

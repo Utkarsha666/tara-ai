@@ -78,13 +78,14 @@ const App = () => {
   const [highlightedComment, setHighlightedComment] = useState(null);
 
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [projectData, setProjectData] = useState(null); // Add this state
+  const [projectData, setProjectData] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [loadingSidebar, setLoadingSidebar] = useState(false);
   const [notificationType, setNotificationType] = useState(null);
   // Reference to the notification sidebar
   const notificationSidebarRef = useRef(null);
+  const [sidebarMessage, setSidebarMessage] = useState(null);
 
   const handleManageMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -114,47 +115,48 @@ const App = () => {
       const postId = notification.post_id;
       const commentId = notification.comment_id;
       const projectId = notification.project_id;
-      const programId = notification.program_id;
-      const notificationType = notification.notification_type;
+      const channelId = notification.channel_id;
+      const channelName = notification.channel_name;
 
-      // Mark the notification as read
-      await markNotificationAsRead(userId, notification.id);
+      const response = await markNotificationAsRead(userId, notification.id);
 
-      // Initialize the data variables
+      // Initialize postData, commentData, and fetchedProjectData to null
       let postData = null;
       let commentData = null;
       let fetchedProjectData = null;
-      let fetchedCapacityBuildingData = null;
 
-      // Handle different types of notifications
-      if (notificationType === "TAG") {
-        // If the notification type is "TAG", fetch the post and comment data
+      // Check if post_id is null and if channel_id exists
+      if (postId === null && channelId) {
+        // Only display the channel message in the sidebar
+        setSidebarPost(null); // No post to display
+        setHighlightedComment(null); // No comment to highlight
+        setProjectData(null); // No project data
+        // You can add the custom message here for the channel notification
+        setSidebarMessage(
+          `You have been added to the private channel: ${channelName}`
+        );
+      } else {
+        // Fetch the post data if post_id exists
         if (postId) {
           postData = await fetchPostById(postId, token);
         }
 
+        // Fetch the comment data if comment_id exists
         if (commentId) {
           commentData = await fetchCommentById(postId, commentId, token);
         }
-      } else if (notificationType === "PROJECT") {
-        // If the notification type is "PROJECT", fetch project data
+
+        // Fetch the project data if project_id exists
         if (projectId && projectId !== "None") {
           fetchedProjectData = await fetchProjectDetails(projectId, token);
         }
-      } else if (notificationType === "CAPACITY_BUILDING") {
-        // If the notification type is "CAPACITY_BUILDING", fetch capacity building data
-        if (programId && programId !== "None") {
-          fetchedCapacityBuildingData =
-            await fetchCapacityBuildingProgramsDetails(programId, token);
-        }
-      }
 
-      // Update the sidebar with the fetched data based on the notification type
-      setSidebarPost(postData); // Set post data if available
-      setHighlightedComment(commentData || null); // Set comment data if available
-      setProjectData(fetchedProjectData || fetchedCapacityBuildingData || null); // Set project or capacity building data
-      // Pass the notification type to the sidebar
-      setNotificationType(notificationType);
+        // Update the sidebar to display the post, comment, or project
+        setSidebarPost(postData);
+        setHighlightedComment(commentData || null);
+        setProjectData(fetchedProjectData || null);
+        setSidebarMessage(null); // Clear any message from the previous step
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       alert("There was an error fetching the notification details.");
@@ -175,6 +177,7 @@ const App = () => {
         // Close the sidebar if clicking outside, whether it's a post or project
         setSidebarPost(null);
         setProjectData(null); // Also clear project data if it's showing
+        setSidebarMessage(null);
       }
     };
 
@@ -185,20 +188,21 @@ const App = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []); // Empty dependency array to only run once when the component mounts
+  }, []);
 
   const closeSidebar = () => {
     setSidebarPost(null);
     setProjectData(null);
+    setSidebarMessage(null);
   };
 
   const openProjectDialog = (project) => {
-    setSelectedProjectId(project.id); // Set the selected project ID
-    setIsDialogOpen(true); // Open the dialog
+    setSelectedProjectId(project.id);
+    setIsDialogOpen(true);
   };
 
   const closeDialog = () => {
-    setIsDialogOpen(false); // Close the dialog
+    setIsDialogOpen(false);
   };
 
   return (
@@ -285,12 +289,12 @@ const App = () => {
                 {
                   to: "/impact-points",
                   icon: <ImpactIcon />,
-                  text: "Impact Points",
+                  text: "Monitoring & Evaluation",
                 },
                 {
                   to: "/community-hub",
                   icon: <GroupIcon />,
-                  text: "Community",
+                  text: "Collaboration",
                 },
                 { to: "/maps", icon: <MapIcon />, text: "Maps" },
               ].map((item) => (
@@ -403,6 +407,7 @@ const App = () => {
             closeSidebar={closeSidebar}
             openProjectDialog={openProjectDialog}
             isLoading={loadingSidebar}
+            sidebarMessage={sidebarMessage}
           />
           {/* Project Details Dialog */}
           {isDialogOpen && (
@@ -411,7 +416,7 @@ const App = () => {
               onClose={closeDialog}
               projectId={selectedProjectId}
               notificationType={notificationType}
-              token={token} // Pass token to ProjectDetailsDialog
+              token={token}
             />
           )}
         </Box>

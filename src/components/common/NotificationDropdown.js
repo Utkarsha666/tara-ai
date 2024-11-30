@@ -9,7 +9,7 @@ const NotificationDropdown = ({
   onClose,
   userId,
   onNotificationUpdate,
-  onNotificationClick, // New prop to handle notification click
+  onNotificationClick,
 }) => {
   const [notifications, setNotifications] = useState([]);
 
@@ -82,7 +82,7 @@ const NotificationDropdown = ({
               <MenuItem
                 key={notification.id} // Use notification.id as the key for uniqueness
                 sx={{ padding: 1, display: "flex", flexDirection: "column" }}
-                onClick={() => handleNotificationClick(notification)} // Handle click
+                onClick={() => handleNotificationClick(notification)}
               >
                 <Typography
                   variant="body2"
@@ -95,8 +95,8 @@ const NotificationDropdown = ({
                     ? `${notification.tagged_by} has mentioned you.`
                     : notification.notification_type === "PROJECT"
                     ? `${notification.tagged_by} has assigned you a project.`
-                    : notification.notification_type === "CAPACITY_BUILDING"
-                    ? `${notification.tagged_by} assigned you Program.`
+                    : notification.notification_type === "CHANNEL"
+                    ? `${notification.tagged_by} has added you ${notification.channel_name}`
                     : "You have a new notification."}
                 </Typography>
                 <Typography

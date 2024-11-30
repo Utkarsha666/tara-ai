@@ -1,4 +1,3 @@
-// ./components/Community/AddChannelMemberDialog.js
 import React, { useState } from "react";
 import {
   Dialog,
@@ -8,22 +7,37 @@ import {
   Typography,
   Divider,
   Box,
+  Chip,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import GradientButton from "../common/Button";
 import CircularLoading from "../common/CircularLoading";
 
 const AddChannelMemberDialog = ({ open, onClose, onAddMember }) => {
-  const [newUsername, setNewUsername] = useState("");
+  const [usernames, setUsernames] = useState([]);
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
 
+  const handleAddUsername = (e) => {
+    if (e.key === "Enter" && e.target.value.trim() !== "") {
+      const username = e.target.value.trim();
+      if (!usernames.includes(username)) {
+        setUsernames([...usernames, username]);
+        e.target.value = "";
+      }
+    }
+  };
+
+  const handleDeleteUsername = (usernameToDelete) => {
+    setUsernames(usernames.filter((username) => username !== usernameToDelete));
+  };
+
   const handleAddMember = () => {
-    if (!newUsername) return;
+    if (usernames.length === 0) return;
     setLoading(true);
-    onAddMember(newUsername).finally(() => {
+    onAddMember(usernames).finally(() => {
       setLoading(false);
-      setNewUsername("");
+      setUsernames([]);
     });
   };
 
@@ -59,27 +73,51 @@ const AddChannelMemberDialog = ({ open, onClose, onAddMember }) => {
         </Typography>
         <Divider sx={{ marginBottom: 2 }} />
 
-        {/* Input for Username */}
-        <TextField
-          label="Enter Username"
-          variant="outlined"
-          fullWidth
-          value={newUsername}
-          onChange={(e) => setNewUsername(e.target.value)}
+        {/* Input for Usernames */}
+        <Box
           sx={{
-            backgroundColor: theme.palette.background.paper,
-            borderRadius: 1,
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: theme.palette.grey[400],
-              },
-              "&:hover fieldset": {
-                borderColor: theme.palette.primary.main,
-              },
-            },
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            paddingBottom: "8px",
+            alignItems: "center",
           }}
-          placeholder="e.g., john_doe"
-        />
+        >
+          {/* Display tags for each username */}
+          {usernames.map((username, index) => (
+            <Chip
+              key={index}
+              label={username}
+              onDelete={() => handleDeleteUsername(username)}
+              color="primary"
+              size="small"
+              sx={{
+                backgroundColor: theme.palette.primary.light,
+                color: theme.palette.primary.contrastText,
+              }}
+            />
+          ))}
+
+          {/* Text input field for adding new usernames */}
+          <TextField
+            variant="outlined"
+            placeholder="username, press enter to add tags"
+            onKeyDown={handleAddUsername}
+            sx={{
+              backgroundColor: theme.palette.background.paper,
+              borderRadius: 1,
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: theme.palette.grey[400],
+                },
+                "&:hover fieldset": {
+                  borderColor: theme.palette.primary.main,
+                },
+              },
+            }}
+            fullWidth
+          />
+        </Box>
       </DialogContent>
 
       <DialogActions
@@ -125,7 +163,7 @@ const AddChannelMemberDialog = ({ open, onClose, onAddMember }) => {
               style={{ margin: "0 auto" }}
             />
           ) : (
-            "Add Member"
+            "Add Members"
           )}
         </GradientButton>
       </DialogActions>

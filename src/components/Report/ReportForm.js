@@ -69,6 +69,7 @@ const groupedTopics = [
       "Building Climate Resilience in Vulnerable Communities Using Technology",
       "Disaster Preparedness Programs for Women and Girls in Climate-Affected Areas",
       "Innovative Solutions for Climate-Induced Migration",
+      "Supporting Disaster and Climate Change Resilience through CSOs",
       "Promoting Climate Resilience in Urban Informal Settlements",
       "The Role of Technology in Enhancing Community Resilience to Climate Change",
       "AI-Assisted Disaster Recovery for Marginalized Populations",
