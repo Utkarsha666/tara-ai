@@ -66,11 +66,18 @@ const ImpactPoints = () => {
   const [capacityBuildingPrograms, setCapacityBuildingPrograms] = useState(0);
   const [timeTrackingData, setTimeTrackingData] = useState(null);
   const [impactScoreData, setImpactScoreData] = useState(null);
+
   // Prepare the data for impact score chart
-  const impactScores =
-    impactScoreData?.projects.map((project) => project.impactScore) || [];
-  const impactProjectNames =
-    impactScoreData?.projects.map((project) => project.projectName) || [];
+  const ongoingProjects =
+    impactScoreData?.projects.filter(
+      (project) => project.status === "Ongoing"
+    ) || [];
+
+  // Extract the impact scores and project names for ongoing projects
+  const impactScores = ongoingProjects.map((project) => project.impactScore);
+  const impactProjectNames = ongoingProjects.map(
+    (project) => project.projectName
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -421,19 +428,18 @@ const ImpactPoints = () => {
               </StyledPaper>
             </BoxItem>
 
-            {/* Bar Chart for Impact Scores */}
             <BoxItem>
               <StyledPaper>
                 <PaperTitle variant="h6">Impact Scores by Project</PaperTitle>
 
                 <Bar
                   data={{
-                    labels: impactProjectNames, // Project names for impact score chart
+                    labels: impactProjectNames,
                     datasets: [
                       {
-                        label: "Impact Score", // Label for the impact score
-                        data: impactScores, // Impact scores for each project
-                        backgroundColor: "rgba(255, 159, 64, 0.6)", // Color for the bars (orange)
+                        label: "Impact Score",
+                        data: impactScores,
+                        backgroundColor: "rgba(255, 159, 64, 0.6)",
                         borderRadius: 8,
                         borderSkipped: false,
                         barPercentage: 0.6,
@@ -444,20 +450,16 @@ const ImpactPoints = () => {
                     responsive: true,
                     plugins: {
                       title: {
-                        display: true,
-                        text: "Impact Scores by Project", // Title for the chart
+                        display: false,
                       },
                       legend: {
-                        position: "top", // Position of the legend
-                        labels: {
-                          boxWidth: 20, // Size of the legend box
-                        },
+                        display: false,
                       },
                       tooltip: {
                         // Tooltip configuration remains enabled to show details on hover
                         callbacks: {
                           label: function (tooltipItem) {
-                            return `Impact Score: ${tooltipItem.raw}`; // Customize tooltip content
+                            return `Impact Score: ${tooltipItem.raw}`;
                           },
                         },
                       },
@@ -466,18 +468,18 @@ const ImpactPoints = () => {
                       x: {
                         title: {
                           display: true,
-                          text: "Projects", // Label for the X-axis
+                          text: "Projects",
                         },
                         ticks: {
-                          display: false, // Hide the project names on the X-axis
+                          display: false,
                         },
                       },
                       y: {
                         title: {
                           display: true,
-                          text: "Impact Score", // Label for the Y-axis
+                          text: "Impact Score",
                         },
-                        beginAtZero: true, // Ensure the Y-axis starts at 0
+                        beginAtZero: true,
                       },
                     },
                   }}
