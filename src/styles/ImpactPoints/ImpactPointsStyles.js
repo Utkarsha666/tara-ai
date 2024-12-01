@@ -1,4 +1,3 @@
-// ./styles/ImpactPoints/ImpactPointsStyles.js
 import { styled } from "@mui/system";
 import { Paper, Box, Typography } from "@mui/material";
 
@@ -39,35 +38,39 @@ export const Card = styled(Paper)(({ theme }) => ({
 
 // Specific styled cards with gradient backgrounds
 export const TotalProjectsCard = styled(Card)({
-  background: "linear-gradient(to right, #8e44ad, #3498db)",
+  background: "linear-gradient(to right, #8e44ad, #3498db)", // Gradient background
 });
 
 export const CapacityBuildingCard = styled(Card)({
-  background: "linear-gradient(to right, #f39c12, #e74c3c)",
+  background: "linear-gradient(to right, #f39c12, #e74c3c)", // Gradient background
 });
 
 export const EventsCard = styled(Card)({
-  background: "linear-gradient(to right, #3498db, #2ecc71)",
+  background: "linear-gradient(to right, #3498db, #2ecc71)", // Gradient background
 });
 
 // BoxItem for individual card wrappers
 export const BoxItem = styled(Box)({
-  flex: "1 1 220px",
+  flex: "1 1 220px", // flex grow, shrink, and basis
+  minWidth: "220px", // Ensures a minimum width for responsiveness
 });
 
 // Chart container that uses grid layout
 export const ChartContainer = styled(Box)({
   display: "grid",
-  gridTemplateColumns: "repeat(2, 1fr)",
+  gridTemplateColumns: "repeat(2, 1fr)", // Two columns
   gap: "24px",
   marginBottom: "24px",
+  "@media (max-width: 768px)": {
+    gridTemplateColumns: "1fr", // Stack the charts on smaller screens
+  },
 });
 
 // Styled Paper for charts
 export const StyledPaper = styled(Paper)({
   padding: "24px",
   backgroundColor: "#ffffff",
-  borderRadius: 50,
+  borderRadius: 50, // Border radius for Paper elements
   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   transition: "all 0.3s ease-in-out",
   "&:hover": {
@@ -79,4 +82,5 @@ export const StyledPaper = styled(Paper)({
 // PaperTitle for chart titles
 export const PaperTitle = styled(Typography)({
   fontWeight: 500,
+  marginBottom: "16px", // Adding space between title and chart
 });
