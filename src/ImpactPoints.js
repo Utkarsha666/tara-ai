@@ -231,7 +231,7 @@ const ImpactPoints = () => {
               <BoxItem>
                 <StyledPaper>
                   <PaperTitle variant="h6">
-                    Team Distribution by Project
+                    Team Distribution by Project (Ongoing)
                   </PaperTitle>
                   <Bar
                     data={{
@@ -246,7 +246,7 @@ const ImpactPoints = () => {
                             "#f39c12",
                             "#3498db",
                           ], // Custom colors for the bars
-                          borderRadius: 8,
+                          borderRadius: 12,
                           borderSkipped: false,
                           barPercentage: 0.6,
                         },
@@ -308,7 +308,7 @@ const ImpactPoints = () => {
                           "#2ecc71", // Color for Completed
                           "#f39c12", // Color for Pending
                         ],
-                        borderRadius: 8,
+                        borderRadius: 12,
                         borderSkipped: false,
                         barPercentage: 0.6,
                       },
@@ -356,7 +356,7 @@ const ImpactPoints = () => {
                         data: elapsedTimes, // Elapsed times for each project
                         backgroundColor: "rgba(255, 99, 132, 0.6)", // Color for the bars (red)
                         stack: "stack1", // Stack group for the dataset
-                        borderRadius: 8,
+                        borderRadius: 12,
                         borderSkipped: false,
                         barPercentage: 0.6,
                       },
@@ -364,8 +364,8 @@ const ImpactPoints = () => {
                         label: "Remaining Time (days)", // Label for the second dataset
                         data: remainingTimes, // Remaining times for each project
                         backgroundColor: "rgba(54, 162, 235, 0.6)", // Color for the bars (blue)
-                        stack: "stack1", // Stack group for the dataset
-                        borderRadius: 8,
+                        stack: "stack2", // Stack group for the dataset
+                        borderRadius: 12,
                         borderSkipped: false,
                         barPercentage: 0.6,
                       },
@@ -373,8 +373,8 @@ const ImpactPoints = () => {
                         label: "Time Spent (days)", // Label for the third dataset
                         data: totalTimesSpent, // Total time spent for each project
                         backgroundColor: "rgba(75, 192, 192, 0.6)", // Color for the bars (green)
-                        stack: "stack1", // Stack group for the dataset
-                        borderRadius: 8,
+                        stack: "stack3", // Stack group for the dataset
+                        borderRadius: 12,
                         borderSkipped: false,
                         barPercentage: 0.6,
                       },
@@ -430,7 +430,9 @@ const ImpactPoints = () => {
 
             <BoxItem>
               <StyledPaper>
-                <PaperTitle variant="h6">Impact Scores by Project</PaperTitle>
+                <PaperTitle variant="h6">
+                  Impact Scores by Project (Ongoing)
+                </PaperTitle>
 
                 <Bar
                   data={{
@@ -440,7 +442,7 @@ const ImpactPoints = () => {
                         label: "Impact Score",
                         data: impactScores,
                         backgroundColor: "rgba(255, 159, 64, 0.6)",
-                        borderRadius: 8,
+                        borderRadius: 12,
                         borderSkipped: false,
                         barPercentage: 0.6,
                       },
