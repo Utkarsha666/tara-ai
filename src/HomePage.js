@@ -185,7 +185,8 @@ const HomePage = () => {
             title="Data-Driven Insights"
             text={
               <>
-                Through an{" "}
+                Users can seamlessly explore data, ask questions, and access
+                essential documents through an{" "}
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
                   interactive dashboard
                 </Typography>{" "}
@@ -193,8 +194,6 @@ const HomePage = () => {
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
                   Q&A chatbot
                 </Typography>
-                , users can explore data, ask questions, and access essential
-                documents seamlessly.
               </>
             }
             imageFirst={false}
@@ -207,13 +206,12 @@ const HomePage = () => {
             text={
               <>
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  Join our Community Hub
+                  Join our Collaboration Hub
                 </Typography>
-                , where activists, policymakers, and leaders collaborate on
-                sustainable climate solutions. Share posts, track projects,
-                access programs, and view events—all in one place. This hub
-                fosters collective action for resilient, gender-responsive
-                climate action.
+                , where civil society, activists, policymakers, and leaders
+                collaborate on sustainable climate solutions. Form teams, share
+                insights, track projects, and access programs and events, all in
+                one place, driving collective action.
               </>
             }
             imageFirst={true}
@@ -226,12 +224,12 @@ const HomePage = () => {
             text={
               <>
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  Track and Manage Impact
+                  Monitor and evaluate{" "}
                 </Typography>
-                , monitor initiatives, track beneficiaries, and generate
-                comprehensive impact reports. Manage programs, projects, and
-                teams efficiently, ensuring transparency and data-driven
-                decision-making.
+                projects, timelines, activities, and team progress in real-time.
+                Generate comprehensive impact reports highlighting successes and
+                challenges, providing donors with transparent insights into
+                their contributions.
               </>
             }
             imageFirst={false}

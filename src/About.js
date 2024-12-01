@@ -60,14 +60,11 @@ const About = () => {
             textAlign: "center",
           }}
         >
-          Tara is more than just an AI—she’s a climate advocate inspired by the
-          Buddhist Goddess Tara, embodying compassion, wisdom, and resilience.
-          Focused on driving gender-responsive solutions in Nepal, Tara
-          leverages the latest AI tools to help communities tackle climate
-          challenges, track their impact, and manage projects for a sustainable
-          future. Tara’s mission is clear: empower communities, promote gender
-          equality, and drive data-informed, impactful climate action that
-          creates lasting change.
+          Tara is an AI-powered climate advocate inspired by the Buddhist
+          goddess Tara, who symbolizes compassion, wisdom, and protection. Just
+          as Tara guides and supports individuals in their journeys, our
+          platform serves as a dedicated partner in driving gender-responsive
+          climate action in Nepal.
         </Typography>
 
         <Typography
@@ -82,16 +79,16 @@ const About = () => {
             textAlign: "center",
           }}
         >
-          Drawing inspiration from the Buddhist Goddess Tara, she combines
-          compassion with advanced AI to transform complex climate data into
-          actionable insights. From brainstorming to project management and
-          generating impact reports, Tara supports policy innovation, local
-          empowerment, and collaborative climate solutions. The Tara community
-          hub is a space where local voices are heard, emerging trends are
-          integrated, and solutions are tailored to the people’s needs. Tara is
-          more than a tool—she’s a trusted partner in building a resilient,
-          sustainable Nepal, driven by compassion, innovation, and collective
-          action.
+          Tara is not just a tool—she is a partner in building a sustainable
+          future. The platform enables individuals, communities, and
+          organizations to collaborate, share insights, manage projects, track
+          progress, and generate actionable recommendations. With a focus on
+          fostering resilient, climate-friendly communities, Tara helps develop
+          sustainable solutions that address climate change while promoting
+          gender equality. By leveraging the latest trends and data, Tara
+          ensures that every step taken is informed, inclusive, and impactful.
+          Together, we can drive real, measurable change and build a better,
+          more sustainable future for all.
         </Typography>
 
         <Box sx={{ marginTop: 3 }}>
