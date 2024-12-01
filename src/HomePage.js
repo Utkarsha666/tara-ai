@@ -130,13 +130,14 @@ const HomePage = () => {
             Empowering Climate Action with Tara
           </Typography>
           <Typography variant="body1" sx={{ marginTop: 1 }}>
-            Tara, an AI-powered climate advocate inspired by the Buddhist
-            Goddess, uses the latest trends and data to drive gender-responsive
-            climate action in Nepal. With an intuitive dashboard, interactive
-            chatbot, and community hub, Tara empowers users to brainstorm,
-            manage projects, track impact, and generate reports, creating
-            sustainable solutions for building resilient, climate-friendly
-            communities.
+            Tara is an AI-powered climate advocate that leverages the latest
+            trends and data to drive gender-responsive climate action in Nepal.
+            Through its intuitive dashboard, interactive chatbot, and
+            collaboration hub, Tara enables users to collaborate, share
+            insights, manage projects, track progress, and generate actionable
+            recommendations. This integrated platform supports the development
+            of sustainable solutions, helping to build resilient,
+            climate-friendly communities.
           </Typography>
         </Box>
 
