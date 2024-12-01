@@ -228,17 +228,17 @@ const ImpactPoints = () => {
                   </PaperTitle>
                   <Bar
                     data={{
-                      labels: teamLabels,
+                      labels: teamLabels, // Project names on the X-axis
                       datasets: [
                         {
-                          label: "Team",
-                          data: teamDistribution,
+                          label: "Team", // Label for the dataset
+                          data: teamDistribution, // Team distribution data
                           backgroundColor: [
                             "#8e44ad",
                             "#2ecc71",
                             "#f39c12",
                             "#3498db",
-                          ],
+                          ], // Custom colors for the bars
                           borderRadius: 8,
                           borderSkipped: false,
                           barPercentage: 0.6,
@@ -249,22 +249,32 @@ const ImpactPoints = () => {
                       responsive: true,
                       plugins: {
                         legend: {
-                          display: false,
+                          display: false, // Disable the legend display
+                        },
+                        tooltip: {
+                          callbacks: {
+                            label: function (tooltipItem) {
+                              return `Team Members: ${tooltipItem.raw}`; // Customize the tooltip to show number of team members
+                            },
+                          },
                         },
                       },
                       scales: {
                         x: {
                           title: {
                             display: true,
-                            text: "Projects",
+                            text: "Projects", // Label for the X-axis
+                          },
+                          ticks: {
+                            display: false, // Hide the project names on the X-axis
                           },
                         },
                         y: {
                           title: {
                             display: true,
-                            text: "No of Team Members",
+                            text: "No of Team Members", // Label for the Y-axis
                           },
-                          beginAtZero: true,
+                          beginAtZero: true, // Ensure the Y-axis starts at 0
                         },
                       },
                     }}
@@ -324,8 +334,6 @@ const ImpactPoints = () => {
               </StyledPaper>
             </BoxItem>
 
-            {/* Time Tracking Bar Chart */}
-            {/* Stacked Bar Chart for Time Tracking by Project */}
             <BoxItem>
               <StyledPaper>
                 <PaperTitle variant="h6">
@@ -378,12 +386,22 @@ const ImpactPoints = () => {
                           boxWidth: 20, // Size of the legend box
                         },
                       },
+                      tooltip: {
+                        callbacks: {
+                          label: function (tooltipItem) {
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw} days`; // Custom tooltip content
+                          },
+                        },
+                      },
                     },
                     scales: {
                       x: {
                         title: {
                           display: true,
                           text: "Projects", // Label for the X-axis
+                        },
+                        ticks: {
+                          display: false, // Hide the project names on the X-axis
                         },
                         grid: {
                           display: false, // Hide grid lines for X-axis
@@ -430,9 +448,17 @@ const ImpactPoints = () => {
                         text: "Impact Scores by Project", // Title for the chart
                       },
                       legend: {
-                        position: false, // Position of the legend
+                        position: "top", // Position of the legend
                         labels: {
                           boxWidth: 20, // Size of the legend box
+                        },
+                      },
+                      tooltip: {
+                        // Tooltip configuration remains enabled to show details on hover
+                        callbacks: {
+                          label: function (tooltipItem) {
+                            return `Impact Score: ${tooltipItem.raw}`; // Customize tooltip content
+                          },
                         },
                       },
                     },
@@ -441,6 +467,9 @@ const ImpactPoints = () => {
                         title: {
                           display: true,
                           text: "Projects", // Label for the X-axis
+                        },
+                        ticks: {
+                          display: false, // Hide the project names on the X-axis
                         },
                       },
                       y: {
