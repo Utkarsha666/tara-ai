@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Line, Bar } from "react-chartjs-2";
-import { Box, Typography } from "@mui/material";
-import CircularLoading from "./components/common/CircularLoading"; // Import CircularLoading component
-import { AuthContext } from "./AuthContext"; // Import the AuthContext
+import { Bar } from "react-chartjs-2";
+import { Box, Typography, Table, TableBody, TableRow } from "@mui/material";
+import CircularLoading from "./components/common/CircularLoading";
+import { AuthContext } from "./AuthContext";
+import { CheckCircle, HelpOutline } from "@mui/icons-material";
 import {
   fetchTotalProjects,
   fetchCapacityBuildingPrograms,
@@ -48,6 +49,12 @@ import {
   ChartContainer,
   StyledPaper,
   PaperTitle,
+  TableHeader,
+  StyledTableCell,
+  StyledTableContainer,
+  StyledTableRow,
+  TableTitle,
+  StatusCell,
 } from "./styles/ImpactPoints/ImpactPointsStyles";
 
 const ImpactPoints = () => {
@@ -150,6 +157,20 @@ const ImpactPoints = () => {
       timeTrackingData["Time Tracking by Project"][project]?.totalTimeSpent || 0
   );
 
+  // Function to return the icon based on the status
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Ongoing":
+        return <CheckCircle />;
+      case "Completed":
+        return <CheckCircle />;
+      case "Pending":
+        return <HelpOutline />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Container>
       <DashboardTitle variant="h4" gutterBottom>
@@ -223,7 +244,6 @@ const ImpactPoints = () => {
               </EventsCard>
             </BoxItem>
           </DashboardOverview>
-
           {/* Graphs Section */}
           <ChartContainer>
             {/* Team Distribution Chart */}
@@ -489,6 +509,42 @@ const ImpactPoints = () => {
               </StyledPaper>
             </BoxItem>
           </ChartContainer>
+
+          <Box sx={{ padding: 2, borderRadius: 8 }}>
+            <TableTitle variant="h5" gutterBottom>
+              Project Impact Scores
+            </TableTitle>
+
+            {impactScoreData &&
+            impactScoreData.projects &&
+            impactScoreData.projects.length > 0 ? (
+              <StyledTableContainer component={StyledPaper}>
+                <Table aria-label="impact scores table">
+                  <TableHeader>
+                    <TableRow>
+                      <StyledTableCell>Project Name</StyledTableCell>
+                      <StyledTableCell>Impact Score</StyledTableCell>
+                      <StyledTableCell>Status</StyledTableCell>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {impactScoreData.projects.map((project, index) => (
+                      <StyledTableRow key={index}>
+                        <StyledTableCell>{project.projectName}</StyledTableCell>
+                        <StyledTableCell>{project.impactScore}</StyledTableCell>
+                        <StatusCell status={project.status}>
+                          {getStatusIcon(project.status)}
+                          {project.status}
+                        </StatusCell>
+                      </StyledTableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </StyledTableContainer>
+            ) : (
+              <Typography>No data available</Typography>
+            )}
+          </Box>
         </>
       )}
     </Container>

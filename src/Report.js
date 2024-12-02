@@ -106,7 +106,7 @@ const Report = () => {
   };
 
   const totalReports = reports.length;
-  const reportsPerPage = 5;
+  const reportsPerPage = 100;
   const totalPages = Math.ceil(totalReports / reportsPerPage);
   const currentReports = reports.slice(
     (currentPage - 1) * reportsPerPage,
