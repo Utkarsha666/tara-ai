@@ -31,6 +31,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import MapIcon from "@mui/icons-material/Map";
 import ImpactIcon from "@mui/icons-material/Star";
 import GroupIcon from "@mui/icons-material/Group";
+import FolderIcon from "@mui/icons-material/Folder";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -47,6 +48,7 @@ import ImpactPoints from "./ImpactPoints";
 import CommunityHub from "./CommunityHub";
 import ProfilePage from "./ProfilePage";
 import ProjectManagement from "./ProjectManagement";
+import ResourceHub from "./ResourceHub"; // Import the ResourceHub component
 
 // Import external styles
 import appStyles from "./styles/AppStyles";
@@ -304,6 +306,11 @@ const App = () => {
                   icon: <GroupIcon />,
                   text: "Collaboration",
                 },
+                {
+                  to: "/resource-hub",
+                  icon: <FolderIcon />, // Resource Hub Icon
+                  text: "Resources",
+                },
                 { to: "/maps", icon: <MapIcon />, text: "Maps" },
               ].map((item) => (
                 <ListItem
@@ -398,6 +405,13 @@ const App = () => {
                 path="/project-management"
                 element={
                   isLoggedIn ? <ProjectManagement /> : <Navigate to="/login" />
+                }
+              />
+              {/* Add Resource Hub Route */}
+              <Route
+                path="/resource-hub"
+                element={
+                  isLoggedIn ? <ResourceHub /> : <Navigate to="/login" />
                 }
               />
             </Routes>
