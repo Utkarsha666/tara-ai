@@ -13,11 +13,19 @@ import {
 import FolderIcon from "@mui/icons-material/Folder";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import { AuthContext } from "./AuthContext";
 import SuccessSnackbar from "./components/common/SuccessSnackbar";
-import { fetchFolders, fetchFolderContents } from "./utils/api/ResourceHubAPI";
+import {
+  fetchFolders,
+  fetchFolderContents,
+  downloadFile,
+  createFolder,
+} from "./utils/api/ResourceHubAPI";
 import CircularLoading from "./components/common/CircularLoading";
 import HomeIcon from "@mui/icons-material/Home";
+import FileDownloadDialog from "./components/common/FileDownloadDialog";
+import CreateFolderDialog from "./components/common/CreateFolderDialog";
 
 const ResourceHub = () => {
   const { token } = useContext(AuthContext);
@@ -29,6 +37,10 @@ const ResourceHub = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [folderHistory, setFolderHistory] = useState([]); // Track visited folders
+  const [selectedFile, setSelectedFile] = useState(null); // For storing the selected file
+  const [openDialog, setOpenDialog] = useState(false); // To control dialog visibility
+  const [openCreateFolderDialog, setOpenCreateFolderDialog] = useState(false); // To control the create folder dialog
+  const [newFolderName, setNewFolderName] = useState(""); // State for new folder name
 
   const loadFolders = async () => {
     if (!token) return;
@@ -36,7 +48,7 @@ const ResourceHub = () => {
     setLoading(true);
     try {
       const data = await fetchFolders(token);
-      setFolders(data); // Set root folders initially
+      setFolders(data);
       setCurrentFolder(null); // Reset to root folder view
       setFolderHistory([]); // Reset folder history
     } catch (err) {
@@ -50,11 +62,10 @@ const ResourceHub = () => {
   };
 
   const handleFolderClick = async (folderId) => {
-    console.log("Navigating to folder with ID:", folderId);
     setLoading(true);
 
     try {
-      const { items } = await fetchFolderContents(folderId, token); // Destructure items from the response
+      const { items } = await fetchFolderContents(folderId, token);
 
       // Separate files and subfolders
       const files = items.filter((item) => item.type === "file");
@@ -66,7 +77,14 @@ const ResourceHub = () => {
         files,
         subfolders,
       });
-      setFolderHistory((prevHistory) => [...prevHistory, folderId]);
+
+      // Update folderHistory correctly by adding the current folderId only if it's not already present
+      setFolderHistory((prevHistory) => {
+        if (prevHistory[prevHistory.length - 1] === folderId) {
+          return prevHistory;
+        }
+        return [...prevHistory, folderId];
+      });
     } catch (err) {
       setSnackbarMessage(`Error fetching resources: ${err.message}`);
       setSnackbarSeverity("error");
@@ -77,18 +95,78 @@ const ResourceHub = () => {
   };
 
   const handleBackClick = () => {
-    // Check if we can go back
+    // Check if we can go back (i.e., we are not at the root folder)
     if (folderHistory.length > 1) {
       // Pop the current folder from history and get the previous folder
       const previousFolderId = folderHistory[folderHistory.length - 2];
 
-      // Remove the last folder from the history (going back one level)
-      setFolderHistory((prevHistory) => prevHistory.slice(0, -1));
+      // Update folderHistory by removing the last folder (going back one level)
+      // Remove the last folder from history (back one level)
+      setFolderHistory((prevHistory) => {
+        const newHistory = prevHistory.slice(0, prevHistory.length - 1);
+        return newHistory;
+      });
 
       // Fetch the contents of the previous folder
       handleFolderClick(previousFolderId);
     } else {
+      // If we are at the root (no folder in history), reset to root view
       setCurrentFolder(null);
+      setFolderHistory([]);
+    }
+  };
+
+  const handleDownloadFile = async () => {
+    if (!selectedFile) {
+      console.error("No file selected for download!");
+      return;
+    }
+
+    const fileId = selectedFile.id;
+
+    try {
+      const blob = await downloadFile(fileId, token);
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = selectedFile.name;
+      link.click();
+
+      setSnackbarMessage("File download started");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (err) {
+      setSnackbarMessage(`Error downloading file: ${err.message}`);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setOpenDialog(false);
+    }
+  };
+
+  const handleCreateFolder = async () => {
+    if (!newFolderName.trim()) return;
+
+    const parentFolder = currentFolder ? currentFolder.id : null;
+
+    try {
+      const response = await createFolder(newFolderName, parentFolder, token);
+
+      setSnackbarMessage(
+        `Folder "${response.folder_name}" created successfully`
+      );
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      setOpenCreateFolderDialog(false);
+      setNewFolderName("");
+
+      // After folder creation, go to the newly created folder's view
+      handleFolderClick(response.folder_id);
+    } catch (err) {
+      setSnackbarMessage(`Error creating folder: ${err.message}`);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -98,7 +176,12 @@ const ResourceHub = () => {
 
   // Go to root folder and reset state
   const goToRoot = () => {
-    loadFolders(); // Call the loadFolders function to reset the view to root
+    loadFolders();
+  };
+
+  const handleFileClick = (file) => {
+    setSelectedFile(file);
+    setOpenDialog(true);
   };
 
   // Loading state
@@ -137,6 +220,14 @@ const ResourceHub = () => {
           <HomeIcon sx={{ fontSize: 40, color: "primary.main" }} />{" "}
           {/* Home Icon */}
         </IconButton>
+
+        {/* Create Folder Icon */}
+        <IconButton
+          onClick={() => setOpenCreateFolderDialog(true)}
+          sx={{ marginBottom: 2, marginLeft: 2 }}
+        >
+          <AddBoxIcon sx={{ fontSize: 40, color: "primary.main" }} />
+        </IconButton>
       </Box>
 
       <Box sx={{ paddingBottom: 2 }}>
@@ -144,10 +235,17 @@ const ResourceHub = () => {
         <IconButton
           onClick={handleBackClick}
           sx={{ marginBottom: 2 }}
-          disabled={folderHistory.length <= 1} // Disable the button if there is no history to go back
+          disabled={folderHistory.length <= 1}
         >
           <ArrowBackIcon />
         </IconButton>
+      </Box>
+
+      {/* Display current folder name */}
+      <Box sx={{ paddingBottom: 2, textAlign: "center" }}>
+        <Typography variant="h6" color="text.primary">
+          {currentFolder ? "" : "Root"}
+        </Typography>
       </Box>
 
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
@@ -196,7 +294,7 @@ const ResourceHub = () => {
           <>
             {currentFolder.files.map((file) => (
               <React.Fragment key={`file-${file.id}`}>
-                <ListItem>
+                <ListItem button onClick={() => handleFileClick(file)}>
                   <ListItemIcon>
                     <InsertDriveFileIcon sx={{ color: "primary.main" }} />
                   </ListItemIcon>
@@ -208,6 +306,25 @@ const ResourceHub = () => {
           </>
         )}
       </List>
+
+      {/* Create Folder Dialog */}
+      {/* The new Create Folder Dialog */}
+      <CreateFolderDialog
+        open={openCreateFolderDialog}
+        onClose={() => setOpenCreateFolderDialog(false)}
+        newFolderName={newFolderName}
+        setNewFolderName={setNewFolderName}
+        handleCreateFolder={handleCreateFolder}
+      />
+
+      {/* FileDownloadDialog Component */}
+      <FileDownloadDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        file={selectedFile}
+        onDownload={handleDownloadFile}
+        loading={loading}
+      />
 
       {/* Snackbar component */}
       <SuccessSnackbar

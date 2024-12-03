@@ -53,11 +53,66 @@ export const fetchFolderContents = async (folderId, token) => {
       id: item.id,
       name: item.name,
       type: item.type, // 'folder' or 'file'
-      parent_folder: item.parent_folder || null, // Include parent_folder information
+      parent_folder: item.parent_folder || null,
     }));
 
     return { items };
   } catch (error) {
     throw new Error(error.message || "Unknown error fetching folder contents");
   }
+};
+
+export const downloadFile = async (fileId, token) => {
+  try {
+    const response = await fetch(
+      `https://taranepal.onrender.com/files/api/resources/download/${fileId}`,
+      {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const blob = await response.blob();
+      return blob;
+    } else {
+      throw new Error("Failed to download file");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const createFolder = async (folderName, parentFolder, token) => {
+  const url = new URL(
+    "https://taranepal.onrender.com/files/api/resources/create_folder/"
+  );
+  // Prepare the parameters for the API request
+  const params = {
+    folder_name: folderName,
+  };
+
+  // If parentFolder is not null, add it to the query string
+  if (parentFolder !== null) {
+    params.parent_folder = parentFolder;
+  }
+
+  url.search = new URLSearchParams(params).toString();
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create folder");
+  }
+
+  return response.json();
 };
