@@ -1,0 +1,63 @@
+// utils/api/ResourceHubAPI.js
+
+export const fetchFolders = async (token) => {
+  try {
+    const response = await fetch(
+      "https://taranepal.onrender.com/files/api/resources/all_folders/",
+      {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch folders");
+    }
+
+    const data = await response.json();
+    // Filter folders where parent_folder is null
+    const filteredFolders = data.folders.filter(
+      (folder) => folder.parent_folder === null
+    );
+    return filteredFolders;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const fetchFolderContents = async (folderId, token) => {
+  try {
+    const response = await fetch(
+      `https://taranepal.onrender.com/files/api/resources/list/${folderId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Check if the response is OK (status 200)
+    if (!response.ok) {
+      throw new Error("Failed to fetch folder contents");
+    }
+
+    // Parse the JSON response
+    const data = await response.json();
+
+    // Map the API response to your required structure
+    const items = data.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      type: item.type, // 'folder' or 'file'
+      parent_folder: item.parent_folder || null, // Include parent_folder information
+    }));
+
+    return { items };
+  } catch (error) {
+    throw new Error(error.message || "Unknown error fetching folder contents");
+  }
+};
