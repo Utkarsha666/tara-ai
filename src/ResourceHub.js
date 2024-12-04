@@ -225,38 +225,39 @@ const ResourceHub = () => {
     }
   };
 
+  useEffect(() => {
+    if (!isMenuOpened) {
+      // Menu has been closed, now we can safely proceed with the file deletion
+      if (selectedFileForMenu) {
+        handleDeleteFile();
+        // Proceed with the delete logic after the menu closes
+      }
+    }
+  }, [isMenuOpened]); // Watch for changes to isMenuOpened
+
   const handleDeleteFile = async () => {
     if (!selectedFileForMenu) return;
+    handleMenuClose();
 
     try {
-      // Delete the file from the server
       const response = await deleteFile(selectedFileForMenu, token);
 
       // Show success message in snackbar
-      setSnackbarMessage(`File deleted successfully`);
+      setSnackbarMessage("File deleted successfully");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
 
-      // Check if we're at the root folder or a subfolder
+      // Reload folders or refresh current folder after deletion
       if (!currentFolder || currentFolder.id === null) {
-        // If at root, reload the folder list
-        loadFolders();
+        loadFolders(); // If at root, reload folder list
       } else {
-        handleMenuClose();
-        // If in a subfolder, refresh that folder
-        handleFolderClick(currentFolder.id);
+        handleFolderClick(currentFolder.id); // Refresh current folder
       }
-
-      // Close the menu after deletion
-      setAnchorEl(null);
     } catch (err) {
-      // Handle error
+      // Handle errors during deletion
       setSnackbarMessage(`Error deleting file: ${err.message}`);
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
-
-      // Close the menu on error
-      setAnchorEl(null);
     }
   };
 
