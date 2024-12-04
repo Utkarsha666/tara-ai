@@ -10,12 +10,15 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import FolderIcon from "@mui/icons-material/Folder";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { AuthContext } from "./AuthContext";
 import SuccessSnackbar from "./components/common/SuccessSnackbar";
 import {
@@ -24,6 +27,7 @@ import {
   downloadFile,
   createFolder,
   uploadFile,
+  deleteFile,
 } from "./utils/api/ResourceHubAPI";
 import CircularLoading from "./components/common/CircularLoading";
 import HomeIcon from "@mui/icons-material/Home";
@@ -47,6 +51,9 @@ const ResourceHub = () => {
   const [newFolderName, setNewFolderName] = useState(""); // State for new folder name
   const [uploadFileDialogOpen, setUploadFileDialogOpen] = useState(false); // To open file upload dialog
   const [fileToUpload, setFileToUpload] = useState(null); // File selected for upload
+  const [anchorEl, setAnchorEl] = useState(null); // For the three dots menu
+  const [selectedFileForMenu, setSelectedFileForMenu] = useState(null); // Track selected file for menu actions
+  const [isMenuOpened, setIsMenuOpened] = useState(false); // Track whether the menu is opened
 
   const loadFolders = async () => {
     if (!token) return;
@@ -68,6 +75,12 @@ const ResourceHub = () => {
   };
 
   const handleFolderClick = async (folderId) => {
+    // Check if the menu is opened, if it is, prevent the download dialog from opening
+    if (isMenuOpened) {
+      setIsMenuOpened(false); // Close the menu after clicking on the file
+      return; // Do nothing here if the menu was opened
+    }
+
     setLoading(true);
 
     try {
@@ -212,6 +225,55 @@ const ResourceHub = () => {
     }
   };
 
+  const handleDeleteFile = async () => {
+    if (!selectedFileForMenu) return;
+
+    try {
+      // Delete the file from the server
+      const response = await deleteFile(selectedFileForMenu, token);
+
+      // Show success message in snackbar
+      setSnackbarMessage(`File deleted successfully`);
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
+      // Check if we're at the root folder or a subfolder
+      if (!currentFolder || currentFolder.id === null) {
+        // If at root, reload the folder list
+        loadFolders();
+      } else {
+        handleMenuClose();
+        // If in a subfolder, refresh that folder
+        handleFolderClick(currentFolder.id);
+      }
+
+      // Close the menu after deletion
+      setAnchorEl(null);
+    } catch (err) {
+      // Handle error
+      setSnackbarMessage(`Error deleting file: ${err.message}`);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+
+      // Close the menu on error
+      setAnchorEl(null);
+    }
+  };
+
+  // for closing the file menu
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setIsMenuOpened(false); // Close the menu
+  };
+
+  // clicking the file/folder menu
+  const handleMenuClick = (event, file) => {
+    setSelectedFileForMenu(file);
+    setAnchorEl(event.currentTarget);
+    setIsMenuOpened(true);
+    event.stopPropagation();
+  };
+
   useEffect(() => {
     loadFolders();
   }, [token]);
@@ -222,6 +284,11 @@ const ResourceHub = () => {
   };
 
   const handleFileClick = (file) => {
+    // Check if the menu is opened, if it is, prevent the download dialog from opening
+    if (isMenuOpened) {
+      setIsMenuOpened(false); // Close the menu after clicking on the file
+      return; // Do nothing here if the menu was opened
+    }
     setSelectedFile(file);
     setOpenDialog(true);
   };
@@ -318,63 +385,71 @@ const ResourceHub = () => {
       </Box>
 
       <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-        {/* Display Root Folders if no folder is selected */}
-        {!currentFolder && folders.length > 0 && (
-          <>
-            {folders.map((folder) => (
-              <React.Fragment key={`folder-${folder.folder_id}`}>
-                <ListItem
-                  button
-                  onClick={() => handleFolderClick(folder.folder_id)}
+        {!currentFolder &&
+          folders.length > 0 &&
+          folders.map((folder) => (
+            <React.Fragment key={`folder-${folder.folder_id}`}>
+              <ListItem
+                button
+                onClick={() => handleFolderClick(folder.folder_id)}
+              >
+                <ListItemIcon>
+                  <FolderIcon sx={{ color: "primary.main" }} />
+                </ListItemIcon>
+                <ListItemText primary={folder.folder_name || folder.name} />
+                <IconButton
+                  onClick={(e) => handleMenuClick(e, folder.folder_id)}
                 >
-                  <ListItemIcon>
-                    <FolderIcon sx={{ color: "primary.main" }} />
-                  </ListItemIcon>
-                  <ListItemText primary={folder.folder_name || folder.name} />
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </>
-        )}
+                  <MoreVertIcon />
+                </IconButton>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
 
-        {/* Display Subfolders if inside a folder */}
-        {currentFolder && currentFolder.subfolders.length > 0 && (
-          <>
-            {currentFolder.subfolders.map((subfolder) => (
-              <React.Fragment key={`folder-${subfolder.id}`}>
-                <ListItem
-                  button
-                  onClick={() => handleFolderClick(subfolder.id)}
-                >
-                  <ListItemIcon>
-                    <FolderIcon sx={{ color: "primary.main" }} />
-                  </ListItemIcon>
-                  <ListItemText primary={subfolder.name} />
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </>
-        )}
+        {currentFolder &&
+          currentFolder.subfolders.length > 0 &&
+          currentFolder.subfolders.map((subfolder) => (
+            <React.Fragment key={`folder-${subfolder.id}`}>
+              <ListItem button onClick={() => handleFolderClick(subfolder.id)}>
+                <ListItemIcon>
+                  <FolderIcon sx={{ color: "primary.main" }} />
+                </ListItemIcon>
+                <ListItemText primary={subfolder.name} />
+                <IconButton onClick={(e) => handleMenuClick(e, subfolder.id)}>
+                  <MoreVertIcon />
+                </IconButton>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
 
-        {/* Display Files if inside a folder */}
-        {currentFolder && currentFolder.files.length > 0 && (
-          <>
-            {currentFolder.files.map((file) => (
-              <React.Fragment key={`file-${file.id}`}>
-                <ListItem button onClick={() => handleFileClick(file)}>
-                  <ListItemIcon>
-                    <InsertDriveFileIcon sx={{ color: "primary.main" }} />
-                  </ListItemIcon>
-                  <ListItemText primary={file.name} />
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-            ))}
-          </>
-        )}
+        {currentFolder &&
+          currentFolder.files.length > 0 &&
+          currentFolder.files.map((file) => (
+            <React.Fragment key={`file-${file.id}`}>
+              <ListItem button onClick={() => handleFileClick(file)}>
+                <ListItemIcon>
+                  <InsertDriveFileIcon sx={{ color: "primary.main" }} />
+                </ListItemIcon>
+                <ListItemText primary={file.name} />
+                <IconButton onClick={(e) => handleMenuClick(e, file.id)}>
+                  <MoreVertIcon />
+                </IconButton>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+          ))}
       </List>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleDeleteFile}>Delete</MenuItem>
+        {/* Add other menu items as needed */}
+      </Menu>
 
       {/* Upload File Dialog */}
       <FileUploadDialog

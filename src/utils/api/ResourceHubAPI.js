@@ -133,3 +133,26 @@ export const uploadFile = async (folderId, formData, token) => {
 
   return response.json();
 };
+
+export const deleteFile = async (itemId, token) => {
+  const url = `https://taranepal.onrender.com/files/api/resources/delete/${itemId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        accept: "application/json", // Accept JSON response
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete item: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data; // Return response data, e.g., success message
+  } catch (error) {
+    throw new Error(error.message); // Handle errors
+  }
+};
