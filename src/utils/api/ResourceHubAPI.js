@@ -116,3 +116,20 @@ export const createFolder = async (folderName, parentFolder, token) => {
 
   return response.json();
 };
+
+export const uploadFile = async (folderId, formData, token) => {
+  const url = `https://taranepal.onrender.com/files/api/resources/upload/${folderId}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Error uploading file");
+  }
+
+  return response.json();
+};

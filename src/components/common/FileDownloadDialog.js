@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Typography,
-  LinearProgress,
   Box,
   IconButton,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import CloseIcon from "@mui/icons-material/Close";
 import GradientButton from "./Button";
+import CircularLoading from "./CircularLoading";
 
 const FileDownloadDialog = ({
   open,
@@ -21,11 +21,19 @@ const FileDownloadDialog = ({
   loading,
   progress,
 }) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
   if (!file) return null;
 
   // Extracting file extension
   const fileExtension = file.name.split(".").pop();
   const fileTypeDisplay = fileExtension ? `*.${fileExtension}` : "Unknown type";
+
+  const handleDownloadClick = async () => {
+    setIsDownloading(true);
+    await onDownload();
+    setIsDownloading(false);
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -51,10 +59,14 @@ const FileDownloadDialog = ({
           </Typography>
         </Box>
 
-        {/* Show the progress bar if the file is being downloaded */}
-        {loading && (
+        {/* Show Circular Loading when the download is in progress */}
+        {isDownloading && (
           <Box mb={2}>
-            <LinearProgress variant="determinate" value={progress} />
+            <CircularLoading
+              size={60}
+              color="primary"
+              message="Downloading..."
+            />
           </Box>
         )}
       </DialogContent>
@@ -72,13 +84,20 @@ const FileDownloadDialog = ({
 
         {/* Download Button */}
         <GradientButton
-          onClick={onDownload}
+          onClick={handleDownloadClick}
           color="primary"
-          loading={loading}
+          loading={loading || isDownloading}
           sx={{ flexGrow: 1 }}
+          disabled={isDownloading}
         >
-          <DownloadIcon sx={{ mr: 1 }} />
-          Download
+          {!isDownloading ? (
+            <>
+              <DownloadIcon sx={{ mr: 1 }} />
+              Download
+            </>
+          ) : (
+            <CircularLoading size={24} color="primary" message="" />
+          )}
         </GradientButton>
       </DialogActions>
     </Dialog>

@@ -9,11 +9,13 @@ import {
   ListItemText,
   Divider,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import FolderIcon from "@mui/icons-material/Folder";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { AuthContext } from "./AuthContext";
 import SuccessSnackbar from "./components/common/SuccessSnackbar";
 import {
@@ -21,11 +23,13 @@ import {
   fetchFolderContents,
   downloadFile,
   createFolder,
+  uploadFile,
 } from "./utils/api/ResourceHubAPI";
 import CircularLoading from "./components/common/CircularLoading";
 import HomeIcon from "@mui/icons-material/Home";
 import FileDownloadDialog from "./components/common/FileDownloadDialog";
 import CreateFolderDialog from "./components/common/CreateFolderDialog";
+import FileUploadDialog from "./components/common/FileUploadDialog";
 
 const ResourceHub = () => {
   const { token } = useContext(AuthContext);
@@ -41,6 +45,8 @@ const ResourceHub = () => {
   const [openDialog, setOpenDialog] = useState(false); // To control dialog visibility
   const [openCreateFolderDialog, setOpenCreateFolderDialog] = useState(false); // To control the create folder dialog
   const [newFolderName, setNewFolderName] = useState(""); // State for new folder name
+  const [uploadFileDialogOpen, setUploadFileDialogOpen] = useState(false); // To open file upload dialog
+  const [fileToUpload, setFileToUpload] = useState(null); // File selected for upload
 
   const loadFolders = async () => {
     if (!token) return;
@@ -170,6 +176,42 @@ const ResourceHub = () => {
     }
   };
 
+  const handleFileSelect = (event) => {
+    setFileToUpload(event.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!fileToUpload) {
+      setSnackbarMessage("No file selected!");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileToUpload);
+
+    const folderId = currentFolder ? currentFolder.id : "root";
+
+    try {
+      const response = await uploadFile(folderId, formData, token);
+
+      setSnackbarMessage(`File "${response.filename}" uploaded successfully`);
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
+      setUploadFileDialogOpen(false);
+      setFileToUpload(null);
+
+      // Optionally, refresh the folder contents
+      handleFolderClick(folderId);
+    } catch (err) {
+      setSnackbarMessage(`Error uploading file: ${err.message}`);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
   useEffect(() => {
     loadFolders();
   }, [token]);
@@ -228,6 +270,33 @@ const ResourceHub = () => {
         >
           <AddBoxIcon sx={{ fontSize: 40, color: "primary.main" }} />
         </IconButton>
+
+        {/* Upload File Icon */}
+        {!currentFolder ? (
+          <Tooltip
+            title="File uploads are only allowed within folders, not at the root level."
+            disableInteractive
+            arrow
+          >
+            <span>
+              <IconButton
+                onClick={() => setUploadFileDialogOpen(true)}
+                sx={{ marginBottom: 2, marginLeft: 2 }}
+                disabled={!currentFolder} // Disable button when at root
+              >
+                <CloudUploadIcon sx={{ fontSize: 40, color: "primary.main" }} />
+              </IconButton>
+            </span>
+          </Tooltip>
+        ) : (
+          <IconButton
+            onClick={() => setUploadFileDialogOpen(true)}
+            sx={{ marginBottom: 2, marginLeft: 2 }}
+            disabled={!currentFolder} // Disable button when at root
+          >
+            <CloudUploadIcon sx={{ fontSize: 40, color: "primary.main" }} />
+          </IconButton>
+        )}
       </Box>
 
       <Box sx={{ paddingBottom: 2 }}>
@@ -307,8 +376,16 @@ const ResourceHub = () => {
         )}
       </List>
 
+      {/* Upload File Dialog */}
+      <FileUploadDialog
+        open={uploadFileDialogOpen}
+        onClose={() => setUploadFileDialogOpen(false)}
+        handleFileSelect={handleFileSelect}
+        handleFileUpload={handleFileUpload}
+        fileToUpload={fileToUpload}
+      />
+
       {/* Create Folder Dialog */}
-      {/* The new Create Folder Dialog */}
       <CreateFolderDialog
         open={openCreateFolderDialog}
         onClose={() => setOpenCreateFolderDialog(false)}
