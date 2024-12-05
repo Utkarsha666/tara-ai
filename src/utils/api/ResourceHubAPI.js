@@ -146,13 +146,17 @@ export const deleteFile = async (itemId, token) => {
       },
     });
 
+    const data = await response.json(); // Parse the JSON body
+
+    // If response.ok is false, throw an error
     if (!response.ok) {
       throw new Error(`Failed to delete item: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    return data; // Return response data, e.g., success message
+    // Return the data (success message)
+    return data;
   } catch (error) {
-    throw new Error(error.message); // Handle errors
+    console.error("Error:", error); // Log the error message
+    throw new Error(error.message); // Propagate the error
   }
 };

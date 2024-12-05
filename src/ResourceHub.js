@@ -54,6 +54,7 @@ const ResourceHub = () => {
   const [anchorEl, setAnchorEl] = useState(null); // For the three dots menu
   const [selectedFileForMenu, setSelectedFileForMenu] = useState(null); // Track selected file for menu actions
   const [isMenuOpened, setIsMenuOpened] = useState(false); // Track whether the menu is opened
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false); // Track delete button click
 
   const loadFolders = async () => {
     if (!token) return;
@@ -76,7 +77,7 @@ const ResourceHub = () => {
 
   const handleFolderClick = async (folderId) => {
     // Check if the menu is opened, if it is, prevent the download dialog from opening
-    if (isMenuOpened) {
+    if (isMenuOpened && !isDeleteClicked) {
       setIsMenuOpened(false); // Close the menu after clicking on the file
       return; // Do nothing here if the menu was opened
     }
@@ -226,21 +227,21 @@ const ResourceHub = () => {
   };
 
   useEffect(() => {
-    if (!isMenuOpened) {
-      // Menu has been closed, now we can safely proceed with the file deletion
-      if (selectedFileForMenu) {
-        handleDeleteFile();
-        // Proceed with the delete logic after the menu closes
-      }
+    // Prevent deletion until the menu is closed and the file is selected
+    if (isDeleteClicked) {
+      handleDeleteFile();
+      handleMenuClose();
     }
-  }, [isMenuOpened]); // Watch for changes to isMenuOpened
+  }, [isDeleteClicked]);
 
   const handleDeleteFile = async () => {
+    // Prevent deletion if already in progress or no file selected
     if (!selectedFileForMenu) return;
+
     handleMenuClose();
 
     try {
-      const response = await deleteFile(selectedFileForMenu, token);
+      await deleteFile(selectedFileForMenu, token); // Perform the file deletion
 
       // Show success message in snackbar
       setSnackbarMessage("File deleted successfully");
@@ -249,15 +250,18 @@ const ResourceHub = () => {
 
       // Reload folders or refresh current folder after deletion
       if (!currentFolder || currentFolder.id === null) {
-        loadFolders(); // If at root, reload folder list
+        loadFolders(); // Reload the folder list if at the root
       } else {
-        handleFolderClick(currentFolder.id); // Refresh current folder
+        handleFolderClick(currentFolder.id); // Refresh the current folder
       }
     } catch (err) {
       // Handle errors during deletion
       setSnackbarMessage(`Error deleting file: ${err.message}`);
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
+    } finally {
+      // Reset deletion state
+      setIsDeleteClicked(false);
     }
   };
 
@@ -448,8 +452,13 @@ const ResourceHub = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleDeleteFile}>Delete</MenuItem>
-        {/* Add other menu items as needed */}
+        <MenuItem
+          onClick={() => {
+            setIsDeleteClicked(true); // Set delete click state to true
+          }}
+        >
+          Delete
+        </MenuItem>
       </Menu>
 
       {/* Upload File Dialog */}
