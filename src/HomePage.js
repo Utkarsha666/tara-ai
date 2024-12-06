@@ -130,38 +130,18 @@ const HomePage = () => {
             Empowering Climate Action with Tara
           </Typography>
           <Typography variant="body1" sx={{ marginTop: 1 }}>
-            Tara is an AI-powered climate advocate that leverages the latest
-            trends and data to drive gender-responsive climate action in Nepal.
-            Through its intuitive dashboard, interactive chatbot, and
-            collaboration hub, Tara enables users to collaborate, share
-            insights, manage projects, track progress, and generate actionable
-            recommendations. This integrated platform supports the development
-            of sustainable solutions, helping to build resilient,
-            climate-friendly communities.
+            Tara is an AI-powered platform that drives impactful projects and
+            sustainable development in Nepal. By leveraging the latest trends
+            and data, it helps NGOs, community organizations, and individuals
+            address climate, social, and development challenges. Tara features a
+            dashboard, collaboration tools, project management, monitoring and
+            evaluation, tracking progress, team management, resource hub,
+            chatbot, and tools to generate actionable recommendations.
           </Typography>
         </Box>
 
         {/* Content Sections */}
         <Box sx={{ padding: 4, fontFamily: "Montserrat, sans-serif" }}>
-          {/* Understanding the Challenge */}
-          <ContentBox
-            image={require("./assets/images/challenge.png")}
-            title="Understanding the Challenge"
-            text={
-              <>
-                The{" "}
-                <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  United Nations Sustainable Development Goals (SDGs)
-                </Typography>{" "}
-                address critical challenges like gender inequality and climate
-                change. Nepal, highly vulnerable to floods, landslides, and
-                disasters, needs urgent action to build resilience and promote
-                gender equality.
-              </>
-            }
-            imageFirst={false}
-          />
-
           {/* Tara Section */}
           <ContentBox
             image={require("./assets/images/Tara-Logo.png")}
@@ -172,8 +152,8 @@ const HomePage = () => {
                   Tara: AI-Powered Advocate for Social Change,{" "}
                 </Typography>
                 analyzes latest trends and integrates human feedback to deliver
-                actionable solutions that shape policy, enhance climate
-                resilience, and drive sustainable progress.
+                actionable solutions that shape policy, enhance impact, and
+                drive sustainable progress.
               </>
             }
             imageFirst={true}
@@ -233,6 +213,25 @@ const HomePage = () => {
               </>
             }
             imageFirst={false}
+          />
+
+          {/* Resources */}
+          <ContentBox
+            image={require("./assets/images/resources.png")}
+            title="Impact Dashboard for Climate Action"
+            text={
+              <>
+                The{" "}
+                <Typography component="span" sx={{ fontWeight: "bold" }}>
+                  Resource Hub{" "}
+                </Typography>
+                is an intuitive platform that helps you organize work-related
+                documents with ease. Create folders, upload various file types
+                (images, PDFs, and more), and navigate resources effortlessly
+                through a user-friendly interface.
+              </>
+            }
+            imageFirst={true}
           />
         </Box>
       </Container>
