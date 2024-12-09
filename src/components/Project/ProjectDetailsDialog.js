@@ -236,7 +236,15 @@ const ProjectDetailsDialog = ({
                 </SectionTitle>
                 <Box>
                   {projectDetails.objectives.map((objective, index) => (
-                    <ChipTag key={index} label={objective} />
+                    <Box key={index} display="flex" alignItems="center" mb={1}>
+                      <ChipTag label={objective.name} />
+                      <SectionText
+                        ml={1}
+                        color={objective.completed ? "green" : "red"}
+                      >
+                        {objective.completed ? "Completed" : "Not Completed"}
+                      </SectionText>
+                    </Box>
                   ))}
                 </Box>
               </Box>

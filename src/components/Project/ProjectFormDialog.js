@@ -11,6 +11,8 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import GradientButton from "../common/Button";
 import CircularLoading from "../common/CircularLoading";
@@ -55,7 +57,6 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
         teamMembersInput: "",
       });
     } else {
-      // Reset to default values for a new project
       setFormData({
         projectName: "",
         description: "",
@@ -79,6 +80,12 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleObjectiveCompletionChange = (index) => {
+    const updatedObjectives = [...formData.objectives];
+    updatedObjectives[index].completed = !updatedObjectives[index].completed;
+    setFormData({ ...formData, objectives: updatedObjectives });
+  };
+
   const handleAddTag = (name, value) => {
     if (value.trim()) {
       if (name === "objectives") {
@@ -87,9 +94,14 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
           .map((item) => item.trim())
           .filter((item) => item.length > 0);
 
+        const objectives = values.map((item) => ({
+          name: item,
+          completed: false, // Default to false for new objectives
+        }));
+
         setFormData({
           ...formData,
-          [name]: [...formData[name], ...values],
+          [name]: [...formData[name], ...objectives],
           [`${name}Input`]: "",
         });
       } else {
@@ -111,11 +123,16 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
 
   const handleSubmit = async () => {
     setLoading(true);
+
     const updatedProject = {
       ...formData,
       location: formData.location.map((loc) => loc.trim()),
-      objectives: formData.objectives.map((objective) => objective.trim()),
+      objectives: formData.objectives.map((objective) => ({
+        name: objective.name.trim(),
+        completed: objective.completed, // Maintain completion status
+      })),
       teamMembers: formData.teamMembers.map((member) => member.trim()),
+      budget: parseFloat(formData.budget) || 0, // Ensure budget is a number
     };
 
     // Simulate form submission delay (e.g., API call)
@@ -131,10 +148,8 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
       </DialogTitle>
       <Box sx={{ padding: 2 }}>
         {loading ? (
-          // Show CircularLoading component while loading
           <CircularLoading message="Submitting Project..." />
         ) : (
-          // Show form when not loading
           <>
             <TextField
               label="Project Name"
@@ -154,7 +169,6 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
               multiline
               rows={4}
             />
-            {/* Status Dropdown */}
             <FormControl fullWidth margin="normal">
               <InputLabel id="status-label">Status</InputLabel>
               <Select
@@ -250,13 +264,23 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
                 }
               }}
             />
-            <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
+            <Stack direction="column" spacing={1} sx={{ marginTop: 1 }}>
               {formData.objectives.map((obj, index) => (
-                <Chip
-                  key={index}
-                  label={obj}
-                  onDelete={() => handleDeleteTag("objectives", obj)}
-                />
+                <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={obj.completed}
+                        onChange={() => handleObjectiveCompletionChange(index)}
+                      />
+                    }
+                    label={obj.name}
+                  />
+                  <Chip
+                    label="Remove"
+                    onDelete={() => handleDeleteTag("objectives", obj.name)}
+                  />
+                </Box>
               ))}
             </Stack>
 

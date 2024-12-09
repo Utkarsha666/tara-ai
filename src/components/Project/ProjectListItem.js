@@ -49,10 +49,32 @@ const ProjectListItem = ({ project, onClick }) => {
           <Box>
             <Label variant="body2">Objectives:</Label>
             <Box mt={1}>
-              {/* Display objectives as custom styled Chips */}
-              {project.objectives.map((objective, index) => (
-                <ObjectiveTag key={index} label={objective} />
-              ))}
+              {/* Display objectives as a numbered list */}
+              <ol style={{ paddingLeft: "20px" }}>
+                {project.objectives.map((objective, index) => (
+                  <li
+                    key={index}
+                    style={{
+                      marginBottom: "8px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* Display objective name */}
+                    <ObjectiveTag label={objective.name} />
+
+                    {/* Display completion status on the extreme right */}
+                    <Typography
+                      variant="body2"
+                      color={objective.completed ? "green" : "red"}
+                      style={{ marginLeft: "auto" }} // This moves the status to the extreme right
+                    >
+                      {objective.completed ? "Completed" : "Not Completed"}
+                    </Typography>
+                  </li>
+                ))}
+              </ol>
             </Box>
           </Box>
         )}
