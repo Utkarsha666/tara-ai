@@ -144,17 +144,23 @@ const ImpactPoints = () => {
   );
 
   // Prepare the data for each bar in the chart
-  const elapsedTimes = projectNames.map(
-    (project) =>
+  const elapsedTimes = projectNames.map((project) =>
+    Math.max(
+      0,
       timeTrackingData["Time Tracking by Project"][project]?.elapsedTime || 0
+    )
   );
-  const remainingTimes = projectNames.map(
-    (project) =>
+  const remainingTimes = projectNames.map((project) =>
+    Math.max(
+      0,
       timeTrackingData["Time Tracking by Project"][project]?.remainingTime || 0
+    )
   );
-  const totalTimesSpent = projectNames.map(
-    (project) =>
+  const totalTimesSpent = projectNames.map((project) =>
+    Math.max(
+      0,
       timeTrackingData["Time Tracking by Project"][project]?.totalTimeSpent || 0
+    )
   );
 
   // Function to return the icon based on the status
