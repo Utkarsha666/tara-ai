@@ -45,7 +45,7 @@ const About = () => {
       {/* About Tara Section */}
       <Box sx={styles.aboutBox}>
         <Typography variant="h3" sx={styles.title}>
-          Empowering Climate Action with Tara
+        Empowering Sustainable Development with AI: Tara's Vision for a Better Future
         </Typography>
 
         <Typography
@@ -60,11 +60,15 @@ const About = () => {
             textAlign: "center",
           }}
         >
-          Tara is an AI-powered climate advocate inspired by the Buddhist
-          goddess Tara, who symbolizes compassion, wisdom, and protection. Just
-          as Tara guides and supports individuals in their journeys, our
-          platform serves as a dedicated partner in driving gender-responsive
-          climate action in Nepal.
+          Tara is an innovative AI-powered platform designed to empower
+          organizations, communities, and individuals in Nepal to tackle
+          pressing climate, social, and development challenges. By utilizing
+          cutting-edge technology and data-driven insights, Tara provides a
+          comprehensive suite of tools to support NGOs, community organizations,
+          and social enterprises in their efforts to create positive change.
+          From enhancing project management and monitoring to offering
+          collaboration features, Tara enables users to streamline their
+          initiatives and make more informed decisions for sustainable impact.
         </Typography>
 
         <Typography
@@ -79,16 +83,15 @@ const About = () => {
             textAlign: "center",
           }}
         >
-          Tara is not just a tool—she is a partner in building a sustainable
-          future. The platform enables individuals, communities, and
-          organizations to collaborate, share insights, manage projects, track
-          progress, and generate actionable recommendations. With a focus on
-          fostering resilient, climate-friendly communities, Tara helps develop
-          sustainable solutions that address climate change while promoting
-          gender equality. By leveraging the latest trends and data, Tara
-          ensures that every step taken is informed, inclusive, and impactful.
-          Together, we can drive real, measurable change and build a better,
-          more sustainable future for all.
+          With its intuitive dashboard, real-time progress tracking, and
+          customizable recommendations, Tara helps users effectively manage
+          resources, measure success, and foster collaboration across teams. The
+          platform also includes a resource hub and an AI-driven chatbot,
+          ensuring users have access to the knowledge and support they need at
+          every stage of their projects. By combining powerful technology with
+          local expertise, Tara is at the forefront of driving meaningful
+          development in Nepal, providing both the tools and insights necessary
+          to create lasting solutions for a better future.
         </Typography>
 
         <Box sx={{ marginTop: 3 }}>

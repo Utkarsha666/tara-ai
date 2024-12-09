@@ -114,11 +114,22 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
     }
   };
 
-  const handleDeleteTag = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: formData[name].filter((item) => item !== value),
-    });
+  const handleDeleteTag = (name, valueOrIndex) => {
+    if (name === "objectives") {
+      // For objectives, we use the index to remove the item
+      const updatedObjectives = [...formData.objectives];
+      updatedObjectives.splice(valueOrIndex, 1); // valueOrIndex is the index for objectives
+      setFormData({
+        ...formData,
+        [name]: updatedObjectives,
+      });
+    } else {
+      // For location and teamMembers, we use the value to filter and remove the item
+      setFormData({
+        ...formData,
+        [name]: formData[name].filter((item) => item !== valueOrIndex),
+      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -237,6 +248,7 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
                 }
               }}
             />
+            {/* Location Tags */}
             <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
               {formData.location.map((loc, index) => (
                 <Chip
@@ -264,6 +276,7 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
                 }
               }}
             />
+            {/* Objectives Tags */}
             <Stack direction="column" spacing={1} sx={{ marginTop: 1 }}>
               {formData.objectives.map((obj, index) => (
                 <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
@@ -278,7 +291,7 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
                   />
                   <Chip
                     label="Remove"
-                    onDelete={() => handleDeleteTag("objectives", obj.name)}
+                    onDelete={() => handleDeleteTag("objectives", index)} // Pass the index for objectives
                   />
                 </Box>
               ))}
@@ -299,12 +312,13 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
                 }
               }}
             />
+            {/* Team Members Tags */}
             <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
               {formData.teamMembers.map((member, index) => (
                 <Chip
                   key={index}
                   label={member}
-                  onDelete={() => handleDeleteTag("teamMembers", member)}
+                  onDelete={() => handleDeleteTag("teamMembers", member)} // Pass the member value
                 />
               ))}
             </Stack>

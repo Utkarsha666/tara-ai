@@ -24,6 +24,8 @@ import {
 import CircularLoading from "../common/CircularLoading";
 import UserProfileDialog from "../common/UserProfileDialog";
 import GradientButton from "../common/Button";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ProjectDialog = ({ open, onClose, token, type }) => {
   const [projects, setProjects] = useState([]);
@@ -31,6 +33,7 @@ const ProjectDialog = ({ open, onClose, token, type }) => {
   const [error, setError] = useState("");
   const [userProfileDialogOpen, setUserProfileDialogOpen] = useState(false);
   const [selectedUsername, setSelectedUsername] = useState(null);
+  const [expandedObjectives, setExpandedObjectives] = useState({});
 
   useEffect(() => {
     if (open && token) {
@@ -60,6 +63,13 @@ const ProjectDialog = ({ open, onClose, token, type }) => {
   const handleUsernameClick = (username) => {
     setSelectedUsername(username);
     setUserProfileDialogOpen(true);
+  };
+
+  const handleToggleObjectives = (projectId) => {
+    setExpandedObjectives((prevState) => ({
+      ...prevState,
+      [projectId]: !prevState[projectId], // Toggle the expanded state for this project
+    }));
   };
 
   return (
@@ -163,22 +173,65 @@ const ProjectDialog = ({ open, onClose, token, type }) => {
                       <strong>Objectives:</strong>
                     </Typography>
                     <Box sx={{ marginBottom: 2 }}>
-                      {/* Objectives Tags */}
-                      {project.objectives.map((objective, index) => (
-                        <Chip
-                          key={index}
-                          label={objective}
-                          sx={{
-                            marginRight: 1,
-                            marginBottom: 1,
-                            backgroundColor: "#3f51b5",
-                            color: "#fff",
-                            fontWeight: "bold",
-                            borderRadius: "20px",
-                          }}
-                        />
-                      ))}
+                      {/* Objectives Cards */}
+                      {project.objectives
+                        .slice(
+                          0,
+                          expandedObjectives[project.id]
+                            ? project.objectives.length
+                            : 3
+                        )
+                        .map((objective, index) => (
+                          <Card
+                            key={index}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              padding: 2,
+                              marginBottom: 1,
+                              borderRadius: 2,
+                              backgroundColor: objective.completed
+                                ? "#e8f5e9"
+                                : "#fce4e4",
+                              boxShadow: 2,
+                            }}
+                          >
+                            <Box sx={{ flexGrow: 1 }}>
+                              <Typography
+                                variant="body2"
+                                color="textPrimary"
+                                fontWeight="bold"
+                              >
+                                {objective.name}
+                              </Typography>
+                            </Box>
+                            <Box>
+                              {objective.completed ? (
+                                <CheckIcon sx={{ color: "#388e3c" }} />
+                              ) : (
+                                <CloseIcon sx={{ color: "#d32f2f" }} />
+                              )}
+                            </Box>
+                          </Card>
+                        ))}
                     </Box>
+
+                    {/* "See More" / "See Less" Toggle */}
+                    {project.objectives.length > 3 && (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          cursor: "pointer",
+                          color: "#1976d2",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => handleToggleObjectives(project.id)}
+                      >
+                        {expandedObjectives[project.id]
+                          ? "See Less"
+                          : "See More"}
+                      </Typography>
+                    )}
 
                     <Typography variant="body1" sx={{ marginTop: 2 }}>
                       <strong>Team Members:</strong>

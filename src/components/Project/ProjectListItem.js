@@ -1,5 +1,6 @@
-import React from "react";
+import { React, useState } from "react";
 import { Box, Typography } from "@mui/material";
+import { CheckCircle, HelpOutline } from "@mui/icons-material"; // Import icons
 import {
   StyledCard,
   StyledCardContent,
@@ -11,8 +12,27 @@ import {
 } from "../../styles/Project/ProjectListItemStyle";
 
 const ProjectListItem = ({ project, onClick }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const handleClick = () => {
     onClick();
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Ongoing":
+        return <CheckCircle sx={{ color: "green", marginRight: 1 }} />;
+      case "Pending":
+        return <HelpOutline sx={{ color: "orange", marginRight: 1 }} />;
+      case "Completed":
+        return <CheckCircle sx={{ color: "red", marginRight: 1 }} />;
+      default:
+        return null;
+    }
+  };
+
+  const handleToggleExpand = (event) => {
+    event.stopPropagation();
+    setIsExpanded(!isExpanded);
   };
 
   return (
@@ -22,12 +42,21 @@ const ProjectListItem = ({ project, onClick }) => {
         <ProjectName variant="h6">{project.projectName}</ProjectName>
 
         {/* Status Badge */}
-        <Status
-          variant="body2"
-          statusColor={project.status === "Ongoing" ? "green" : "red"}
-        >
-          {project.status}
-        </Status>
+        <Box display="flex" alignItems="center">
+          {getStatusIcon(project.status)} {/* Status icon */}
+          <Status
+            variant="body2"
+            statusColor={
+              project.status === "Ongoing"
+                ? "green"
+                : project.status === "Pending"
+                ? "orange"
+                : "red"
+            }
+          >
+            {project.status}
+          </Status>
+        </Box>
 
         <DividerStyled />
 
@@ -51,7 +80,10 @@ const ProjectListItem = ({ project, onClick }) => {
             <Box mt={1}>
               {/* Display objectives as a numbered list */}
               <ol style={{ paddingLeft: "20px" }}>
-                {project.objectives.map((objective, index) => (
+                {(isExpanded
+                  ? project.objectives
+                  : project.objectives.slice(0, 3)
+                ).map((objective, index) => (
                   <li
                     key={index}
                     style={{
@@ -75,6 +107,16 @@ const ProjectListItem = ({ project, onClick }) => {
                   </li>
                 ))}
               </ol>
+              {/* Toggle button for "See More" / "See Less" */}
+              {project.objectives.length > 3 && (
+                <Typography
+                  variant="body2"
+                  sx={{ cursor: "pointer", color: "primary.main" }}
+                  onClick={handleToggleExpand} // Handle only the expansion here
+                >
+                  {isExpanded ? "See Less" : "See More"}
+                </Typography>
+              )}
             </Box>
           </Box>
         )}

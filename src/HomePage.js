@@ -127,7 +127,7 @@ const HomePage = () => {
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            Empowering Climate Action with Tara
+          Driving Impactful Change with AI for a Sustainable Nepal
           </Typography>
           <Typography variant="body1" sx={{ marginTop: 1 }}>
             Tara is an AI-powered platform that drives impactful projects and

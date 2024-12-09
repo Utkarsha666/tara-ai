@@ -8,6 +8,8 @@ import {
 } from "../../utils/api/ProjectManagementAPI";
 import GradientButton from "../common/Button";
 import CircularLoading from "../common/CircularLoading";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import UserProfileDialog from "../common/UserProfileDialog";
 import EditIcon from "@mui/icons-material/Edit";
 import ProjectFormDialog from "./ProjectFormDialog";
@@ -24,7 +26,7 @@ import {
   DialogActionsStyled,
 } from "../../styles/Project/ProjectDetailsDialogStyles";
 
-import SuccessSnackbar from "../common/SuccessSnackbar"; // Import SuccessSnackbar
+import SuccessSnackbar from "../common/SuccessSnackbar";
 
 const ProjectDetailsDialog = ({
   open,
@@ -234,16 +236,63 @@ const ProjectDetailsDialog = ({
                 <SectionTitle>
                   <strong>Objectives</strong>
                 </SectionTitle>
-                <Box>
+                <Box display="flex" flexDirection="column" gap={2}>
                   {projectDetails.objectives.map((objective, index) => (
-                    <Box key={index} display="flex" alignItems="center" mb={1}>
-                      <ChipTag label={objective.name} />
-                      <SectionText
+                    <Box
+                      key={index}
+                      display="flex"
+                      alignItems="center"
+                      p={2}
+                      borderRadius="8px"
+                      boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
+                      bgcolor={objective.completed ? "#e8f5e9" : "#fce4e4"}
+                      sx={{
+                        transition: "all 0.3s ease-in-out",
+                        "&:hover": {
+                          boxShadow: "0px 6px 8px rgba(0, 0, 0, 0.2)",
+                        },
+                      }}
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        flexGrow={1}
                         ml={1}
-                        color={objective.completed ? "green" : "red"}
+                        alignItems="flex-start"
                       >
-                        {objective.completed ? "Completed" : "Not Completed"}
-                      </SectionText>
+                        <SectionText
+                          variant="body2"
+                          fontWeight="bold"
+                          color={objective.completed ? "#388e3c" : "#d32f2f"}
+                        >
+                          {objective.name}
+                        </SectionText>
+                      </Box>
+                      <Box>
+                        {objective.completed ? (
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            bgcolor="#388e3c"
+                            borderRadius="50%"
+                            p={1}
+                          >
+                            <CheckIcon style={{ color: "white" }} />
+                          </Box>
+                        ) : (
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            bgcolor="#d32f2f"
+                            borderRadius="50%"
+                            p={1}
+                          >
+                            <CloseIcon style={{ color: "white" }} />
+                          </Box>
+                        )}
+                      </Box>
                     </Box>
                   ))}
                 </Box>
