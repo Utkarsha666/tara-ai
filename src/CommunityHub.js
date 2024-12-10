@@ -18,10 +18,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  Dialog,
-  DialogContent,
-  DialogActions,
-  TextField,
 } from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
 import EventNoteIcon from "@mui/icons-material/EventNote";
@@ -116,8 +112,8 @@ const CommunityHub = () => {
     };
 
     getPostsData();
-    setPreviousChannel(selectedChannel);
-  }, [selectedChannel, token, previousChannel]);
+    setPreviousChannel(selectedChannel); // This should be after the fetch, just like before
+  }, [selectedChannel, previousChannel, token]); // Including previousChannel is correct
 
   // Function to fetch channel members
   const fetchMembers = async (channelId) => {
@@ -157,6 +153,10 @@ const CommunityHub = () => {
     setSnackbarMessage("Post successfully created!");
     setSnackbarSeverity("success");
     setSnackbarOpen(true);
+  };
+
+  const handleDeletePost = (postId) => {
+    setPosts(posts.filter((post) => post.id !== postId));
   };
 
   const handleOpenProjectDialog = () => setProjectDialogOpen(true);
@@ -412,6 +412,7 @@ const CommunityHub = () => {
                       token={token}
                       setError={setError}
                       username={username}
+                      onDeletePost={handleDeletePost}
                     />
                   ))
                 ) : (

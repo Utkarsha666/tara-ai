@@ -166,16 +166,15 @@ export const fetchChannelMembers = async (channelId, token) => {
 };
 
 // Function to add a user to a channel
-export const addUserToChannel = async (channelId, usernames, token) => {
+export const addUserToChannel = async (channelId, username, token) => {
   const response = await fetch(
-    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/`,
+    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/?username=${username}`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(usernames), // Send usernames as JSON array in request body
     }
   );
 
@@ -184,4 +183,62 @@ export const addUserToChannel = async (channelId, usernames, token) => {
   }
 
   return response.json(); // Return the response body (channel data)
+};
+
+// Function to update a post
+export const updatePost = async (postId, updatedPostData, token) => {
+  try {
+    const response = await fetch(
+      `https://taranepal.onrender.com/api/community/posts/${postId}/`,
+      {
+        method: "PUT", // PUT request to update the post
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`, // Include the token for authentication
+          "Content-Type": "application/json", // Ensure the server knows we are sending JSON
+        },
+        body: JSON.stringify(updatedPostData), // Send the updated title and content in the body
+      }
+    );
+
+    if (!response.ok) {
+      // If the response is not successful, throw an error
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update the post");
+    }
+
+    // Return the updated post data
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message || "Failed to update the post");
+  }
+};
+
+// Function to delete a post using the API
+export const deletePost = async (postId, token) => {
+  try {
+    // Send DELETE request to the API
+    const response = await fetch(
+      `https://taranepal.onrender.com/api/community/posts/${postId}/`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      return data; // Return the response data (message and post_id)
+    } else {
+      throw new Error("Failed to delete the post");
+    }
+  } catch (error) {
+    throw new Error(
+      error.message || "An error occurred while deleting the post"
+    );
+  }
 };

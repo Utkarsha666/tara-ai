@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Box, Typography, Avatar, Button, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Avatar,
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 import CommentCard from "./CommentCard";
 import {
   PostCardWrapper,
@@ -9,8 +19,13 @@ import {
   PostContent,
   CommentsSection,
 } from "../../styles/PostCardStyle"; // Simplified import for styling
-import { addComment } from "../../utils/api/CommunityAPI";
+import {
+  addComment,
+  updatePost,
+  deletePost,
+} from "../../utils/api/CommunityAPI";
 import UserProfileDialog from "../common/UserProfileDialog";
+import SuccessSnackbar from "../common/SuccessSnackbar";
 
 // Utility function to format date
 const formatDate = (dateString) => {
@@ -26,13 +41,31 @@ const formatDate = (dateString) => {
   }).format(date);
 };
 
-const PostCard = ({ post, token, setError, username, highlightedComment }) => {
+const PostCard = ({
+  post,
+  token,
+  setError,
+  username,
+  highlightedComment,
+  onDeletePost,
+}) => {
   const [newComment, setNewComment] = useState(""); // State to hold new comment
   const [loadingComment, setLoadingComment] = useState(false); // Loading state for adding comment
   const [showAllComments, setShowAllComments] = useState(false); // State to toggle comments
   const [dialogOpen, setDialogOpen] = useState(false); // State to control the dialog visibility
   const [isContentExpanded, setIsContentExpanded] = useState(false); // State to track content expansion
   const [clickedUsername, setClickedUsername] = useState(null); // Track which username is clicked (post.author or tagged user)
+  const [editDialogOpen, setEditDialogOpen] = useState(false); // State to open the edit dialog
+  const [editedPostContent, setEditedPostContent] = useState(post.content); // Edited content
+  const [editedPostTitle, setEditedPostTitle] = useState(post.title); // Edited title
+
+  // Snackbar state for error and success messages
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("error"); // "error" by default
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState(null); // Store the ID of the post to delete
 
   // Function to add a comment
   const handleAddComment = async (postId) => {
@@ -56,6 +89,59 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
       setError("Failed to add comment");
     } finally {
       setLoadingComment(false);
+    }
+  };
+
+  // Function to handle post editing
+  const handleEditPost = async () => {
+    if (editedPostContent.trim() === "" || editedPostTitle.trim() === "") {
+      setSnackbarMessage("Title and content cannot be empty.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const updatedPost = {
+      ...post,
+      title: editedPostTitle,
+      content: editedPostContent,
+    };
+
+    try {
+      await updatePost(post.id, updatedPost, token); // Call the API to update the post
+      post.title = editedPostTitle; // Update the local post state
+      post.content = editedPostContent;
+      setEditDialogOpen(false); // Close the dialog after successful update
+      setSnackbarMessage("Post updated successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true); // Open snackbar with success message
+    } catch (error) {
+      setSnackbarMessage("Failed to update post");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true); // Open snackbar with error message
+    }
+  };
+
+  // Function to open the delete confirmation dialog
+  const openDeleteDialog = (postId) => {
+    setPostIdToDelete(postId); // Store the post ID that is about to be deleted
+    setDeleteDialogOpen(true); // Open the delete confirmation dialog
+  };
+
+  // Function to delete the post
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(postIdToDelete, token); // Use the postIdToDelete here
+      onDeletePost(postIdToDelete); // Call onDeletePost with the post ID
+      setSnackbarMessage("Post deleted successfully!");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage("Failed to delete post");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setDeleteDialogOpen(false); // Close the delete confirmation dialog
     }
   };
 
@@ -142,6 +228,43 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
             </Box>
           </Box>
         </PostUserTime>
+        {/* Edit and Delete hyperlinks (only visible to the post author) */}
+        {post.author === username && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {/* Edit Link */}
+            <Typography
+              variant="body2"
+              sx={{
+                cursor: "pointer",
+                color: "#007bff",
+                marginRight: 2, // Spacing between Edit and Delete links
+              }}
+              onClick={() => setEditDialogOpen(true)}
+            >
+              Edit
+            </Typography>
+
+            {/* Delete Link */}
+            <Typography
+              variant="body2"
+              sx={{
+                cursor: "pointer",
+                color: "#d32f2f", // Red color for Delete
+              }}
+              onClick={() => openDeleteDialog(post.id)}
+            >
+              Delete
+            </Typography>
+          </Box>
+        )}
       </PostHeader>
 
       {/* Post content with clickable @username links */}
@@ -231,6 +354,65 @@ const PostCard = ({ post, token, setError, username, highlightedComment }) => {
         onClose={() => setDialogOpen(false)}
         username={clickedUsername}
         token={token}
+      />
+
+      {/* Edit Post Dialog */}
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+        <DialogTitle>Edit Post</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Title"
+            fullWidth
+            variant="outlined"
+            value={editedPostTitle}
+            onChange={(e) => setEditedPostTitle(e.target.value)}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Content"
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={4}
+            value={editedPostContent}
+            onChange={(e) => setEditedPostContent(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditDialogOpen(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleEditPost} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirmation Dialog for Deleting Post */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Are you sure?</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this post?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeletePost} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* SuccessSnackbar for error or success */}
+      <SuccessSnackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        severity={snackbarSeverity}
       />
     </PostCardWrapper>
   );
