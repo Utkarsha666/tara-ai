@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { CheckCircle, HelpOutline } from "@mui/icons-material"; // Import icons
+import { CheckCircle, HelpOutline } from "@mui/icons-material";
 import {
   StyledCard,
   StyledCardContent,

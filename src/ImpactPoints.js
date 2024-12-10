@@ -225,7 +225,7 @@ const ImpactPoints = () => {
                   variant="h4"
                   sx={{ fontWeight: 700, color: "#fff" }}
                 >
-                  1 {/* Set the value to 0 for now */}
+                  {capacityBuildingPrograms}
                 </Typography>
               </CapacityBuildingCard>
             </BoxItem>

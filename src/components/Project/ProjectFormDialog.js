@@ -13,9 +13,13 @@ import {
   FormControl,
   Checkbox,
   FormControlLabel,
+  Grid,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import GradientButton from "../common/Button";
 import CircularLoading from "../common/CircularLoading";
+import { CheckCircle, Edit, Delete } from "@mui/icons-material";
 
 const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
   const [formData, setFormData] = useState({
@@ -36,7 +40,6 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
 
   const [loading, setLoading] = useState(false);
 
-  // If editing a project, pre-fill the form data with the current project values
   useEffect(() => {
     if (isEditing && project) {
       setFormData({
@@ -96,7 +99,7 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
 
         const objectives = values.map((item) => ({
           name: item,
-          completed: false, // Default to false for new objectives
+          completed: false,
         }));
 
         setFormData({
@@ -116,15 +119,13 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
 
   const handleDeleteTag = (name, valueOrIndex) => {
     if (name === "objectives") {
-      // For objectives, we use the index to remove the item
       const updatedObjectives = [...formData.objectives];
-      updatedObjectives.splice(valueOrIndex, 1); // valueOrIndex is the index for objectives
+      updatedObjectives.splice(valueOrIndex, 1);
       setFormData({
         ...formData,
         [name]: updatedObjectives,
       });
     } else {
-      // For location and teamMembers, we use the value to filter and remove the item
       setFormData({
         ...formData,
         [name]: formData[name].filter((item) => item !== valueOrIndex),
@@ -140,15 +141,13 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
       location: formData.location.map((loc) => loc.trim()),
       objectives: formData.objectives.map((objective) => ({
         name: objective.name.trim(),
-        completed: objective.completed, // Maintain completion status
+        completed: objective.completed,
       })),
       teamMembers: formData.teamMembers.map((member) => member.trim()),
-      budget: parseFloat(formData.budget) || 0, // Ensure budget is a number
+      budget: parseFloat(formData.budget) || 0,
     };
 
-    // Simulate form submission delay (e.g., API call)
     await onSubmit(updatedProject);
-
     setLoading(false);
   };
 
@@ -157,171 +156,225 @@ const ProjectFormDialog = ({ project, onClose, onSubmit, isEditing }) => {
       <DialogTitle>
         {isEditing ? "Edit Project" : "Add New Project"}
       </DialogTitle>
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ padding: 3 }}>
         {loading ? (
           <CircularLoading message="Submitting Project..." />
         ) : (
           <>
-            <TextField
-              label="Project Name"
-              name="projectName"
-              value={formData.projectName}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              multiline
-              rows={4}
-            />
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="status-label">Status</InputLabel>
-              <Select
-                labelId="status-label"
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                label="Status"
-              >
-                <MenuItem value="Ongoing">Ongoing</MenuItem>
-                <MenuItem value="Completed">Completed</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
-              </Select>
-            </FormControl>
-
-            <TextField
-              label="Start Date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="End Date"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="Donor"
-              name="donor"
-              value={formData.donor}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              label="Budget"
-              name="budget"
-              value={formData.budget}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-
-            {/* Location Tags */}
-            <TextField
-              label="Locations (press-enter to add tags)"
-              name="locationInput"
-              value={formData.locationInput}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleAddTag("location", formData.locationInput);
-                  e.preventDefault();
-                }
-              }}
-            />
-            {/* Location Tags */}
-            <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
-              {formData.location.map((loc, index) => (
-                <Chip
-                  key={index}
-                  label={loc}
-                  onDelete={() => handleDeleteTag("location", loc)}
+            <Grid container spacing={3}>
+              {/* Project Details */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Project Name"
+                  name="projectName"
+                  value={formData.projectName}
+                  onChange={handleChange}
+                  fullWidth
+                  required
                 />
-              ))}
-            </Stack>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Donor"
+                  name="donor"
+                  value={formData.donor}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  fullWidth
+                  multiline
+                  rows={4}
+                />
+              </Grid>
 
-            {/* Objectives Tags */}
-            <TextField
-              label="Objectives (press-enter to add tags)"
-              name="objectivesInput"
-              value={formData.objectivesInput}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              multiline
-              rows={4}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleAddTag("objectives", formData.objectivesInput);
-                  e.preventDefault();
-                }
-              }}
-            />
-            {/* Objectives Tags */}
-            <Stack direction="column" spacing={1} sx={{ marginTop: 1 }}>
-              {formData.objectives.map((obj, index) => (
-                <Box key={index} sx={{ display: "flex", alignItems: "center" }}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={obj.completed}
-                        onChange={() => handleObjectiveCompletionChange(index)}
-                      />
+              {/* Status, Dates, Budget */}
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    label="Status"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="Ongoing">Ongoing</MenuItem>
+                    <MenuItem value="Completed">Completed</MenuItem>
+                    <MenuItem value="Pending">Pending</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Start Date"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                  fullWidth
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="End Date"
+                  name="endDate"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                  fullWidth
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Budget"
+                  name="budget"
+                  value={formData.budget}
+                  onChange={handleChange}
+                  fullWidth
+                  type="number"
+                  InputProps={{ inputProps: { min: 0 } }}
+                />
+              </Grid>
+
+              {/* Objectives Section */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ marginTop: 3 }}>
+                  Objectives (Milestones)
+                </Typography>
+                <TextField
+                  label="Add Objective"
+                  name="objectivesInput"
+                  value={formData.objectivesInput}
+                  onChange={handleChange}
+                  fullWidth
+                  multiline
+                  rows={2}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddTag("objectives", formData.objectivesInput);
+                      e.preventDefault();
                     }
-                    label={obj.name}
-                  />
-                  <Chip
-                    label="Remove"
-                    onDelete={() => handleDeleteTag("objectives", index)} // Pass the index for objectives
-                  />
-                </Box>
-              ))}
-            </Stack>
-
-            {/* Team Members Tags */}
-            <TextField
-              label="Team Members (press-enter to add tags)"
-              name="teamMembersInput"
-              value={formData.teamMembersInput}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleAddTag("teamMembers", formData.teamMembersInput);
-                  e.preventDefault();
-                }
-              }}
-            />
-            {/* Team Members Tags */}
-            <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
-              {formData.teamMembers.map((member, index) => (
-                <Chip
-                  key={index}
-                  label={member}
-                  onDelete={() => handleDeleteTag("teamMembers", member)} // Pass the member value
+                  }}
                 />
-              ))}
-            </Stack>
+                <Stack direction="column" spacing={2} sx={{ marginTop: 2 }}>
+                  {formData.objectives.map((obj, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        padding: 2,
+                        borderRadius: 2,
+                        boxShadow: 1,
+                        backgroundColor: obj.completed ? "#e8f5e9" : "#ffffff",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box sx={{ flex: 1 }}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={obj.completed}
+                              onChange={() =>
+                                handleObjectiveCompletionChange(index)
+                              }
+                            />
+                          }
+                          label={
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                textDecoration: obj.completed
+                                  ? "line-through"
+                                  : "none",
+                              }}
+                            >
+                              {obj.name}
+                            </Typography>
+                          }
+                        />
+                      </Box>
+
+                      {/* Edit and Delete icons */}
+                      <Box>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleDeleteTag("objectives", index)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  ))}
+                </Stack>
+              </Grid>
+
+              {/* Location Section */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ marginTop: 3 }}>
+                  Locations
+                </Typography>
+                <TextField
+                  label="Add Location"
+                  name="locationInput"
+                  value={formData.locationInput}
+                  onChange={handleChange}
+                  fullWidth
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddTag("location", formData.locationInput);
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
+                  {formData.location.map((loc, index) => (
+                    <Chip
+                      key={index}
+                      label={loc}
+                      onDelete={() => handleDeleteTag("location", loc)}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+
+              {/* Team Members Section */}
+              <Grid item xs={12}>
+                <Typography variant="h6" sx={{ marginTop: 3 }}>
+                  Team Members
+                </Typography>
+                <TextField
+                  label="Add Team Member"
+                  name="teamMembersInput"
+                  value={formData.teamMembersInput}
+                  onChange={handleChange}
+                  fullWidth
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddTag("teamMembers", formData.teamMembersInput);
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
+                  {formData.teamMembers.map((member, index) => (
+                    <Chip
+                      key={index}
+                      label={member}
+                      onDelete={() => handleDeleteTag("teamMembers", member)}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+            </Grid>
           </>
         )}
       </Box>
