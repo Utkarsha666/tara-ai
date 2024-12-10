@@ -219,7 +219,7 @@ const CommunityHub = () => {
       setAddMemberDialogOpen(false);
     } catch (err) {
       setSnackbarMessage(
-        "failed, make sure the username is not already in the team"
+        "Error: Username already in the team or Network Error"
       );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);

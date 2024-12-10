@@ -168,21 +168,24 @@ export const fetchChannelMembers = async (channelId, token) => {
 // Function to add a user to a channel
 export const addUserToChannel = async (channelId, username, token) => {
   const response = await fetch(
-    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/?username=${username}`,
+    `https://taranepal.onrender.com/api/community/channels/${channelId}/add_user/`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(username), // Send username as a string
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to add user to channel");
+    const errorDetails = await response.json();
+    console.error("Error response:", errorDetails);
+    throw new Error(`Failed to add user to channel: ${errorDetails.detail}`);
   }
 
-  return response.json(); // Return the response body (channel data)
+  return response.json(); // Return the successful response
 };
 
 // Function to update a post
