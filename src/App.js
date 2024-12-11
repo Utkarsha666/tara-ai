@@ -61,6 +61,7 @@ import {
 } from "./utils/api/ProjectManagementAPI";
 import { markNotificationAsRead } from "./utils/api/NotificationAPI";
 import ProjectDetailsDialog from "./components/Project/ProjectDetailsDialog";
+import ChatbotWrapper from "./components/common/ChatbotWrapper";
 
 const App = () => {
   const {
@@ -442,6 +443,7 @@ const App = () => {
             />
           )}
         </Box>
+        <ChatbotWrapper token={token} />
       </Box>
     </ThemeProvider>
   );
