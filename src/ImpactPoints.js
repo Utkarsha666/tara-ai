@@ -518,7 +518,7 @@ const ImpactPoints = () => {
 
           <Box sx={{ padding: 2, borderRadius: 8 }}>
             <TableTitle variant="h5" gutterBottom>
-              Project Impact Scores
+              Projects
             </TableTitle>
 
             {impactScoreData &&
@@ -530,6 +530,8 @@ const ImpactPoints = () => {
                     <TableRow>
                       <StyledTableCell>Project Name</StyledTableCell>
                       <StyledTableCell>Impact Score</StyledTableCell>
+                      <StyledTableCell>Completed</StyledTableCell>
+                      <StyledTableCell>% Completed</StyledTableCell>
                       <StyledTableCell>Status</StyledTableCell>
                     </TableRow>
                   </TableHeader>
@@ -538,6 +540,13 @@ const ImpactPoints = () => {
                       <StyledTableRow key={index}>
                         <StyledTableCell>{project.projectName}</StyledTableCell>
                         <StyledTableCell>{project.impactScore}</StyledTableCell>
+                        <StyledTableCell>
+                          {project.completedObjectives}/
+                          {project.totalObjectives}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {project.completionPercentage.toFixed(2)}%
+                        </StyledTableCell>
                         <StatusCell status={project.status}>
                           {getStatusIcon(project.status)}
                           {project.status}
