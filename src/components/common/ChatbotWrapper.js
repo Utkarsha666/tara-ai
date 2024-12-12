@@ -26,7 +26,8 @@ const ChatbotWrapper = ({ token }) => {
         ...prevHistory,
         {
           type: "bot",
-          message: "Looks like you are not logged in to answer your queries",
+          message:
+            " 🚫 Looks like you are not logged in to answer your queries",
         },
       ]);
       setUserInput(""); // Clear the input field
@@ -39,25 +40,21 @@ const ChatbotWrapper = ({ token }) => {
     ]);
     setUserInput(""); // Clear the input field
 
-    setIsLoadingResponse(true);
-    setChatHistory((prevHistory) => [
-      ...prevHistory,
-      { type: "bot", message: "..." }, // Typing indicator
-    ]);
+    setIsLoadingResponse(true); // Set loading state to true before sending the request
 
     try {
       const response = await fetchChatbotResponse(token, userInput);
       setChatHistory((prevHistory) => [
-        ...prevHistory.filter((chat) => chat.message !== "..."), // Remove typing indicator
+        ...prevHistory,
         { type: "bot", message: response.answer },
       ]);
     } catch (error) {
       setChatHistory((prevHistory) => [
-        ...prevHistory.filter((chat) => chat.message !== "..."),
+        ...prevHistory,
         { type: "bot", message: "Sorry, I couldn't understand that." },
       ]);
     } finally {
-      setIsLoadingResponse(false);
+      setIsLoadingResponse(false); // Set loading state to false after receiving the response
     }
   };
 
@@ -72,7 +69,7 @@ const ChatbotWrapper = ({ token }) => {
         {
           type: "bot",
           message:
-            "Hello, Currently my knowledge is limited to only Climate Change and Gender Inequality in Nepal",
+            "Hello 🌍, Currently my knowledge is limited to only Climate Change 🌱 and Gender Inequality 🚺 in Nepal 🇳🇵.",
         },
       ]);
       setHasGreeted(true);
@@ -118,6 +115,7 @@ const ChatbotWrapper = ({ token }) => {
           transform: isChatOpen ? "scale(1)" : "scale(0.1)",
           opacity: isChatOpen ? 1 : 0,
           zIndex: 1000,
+          overflow: "hidden", // Prevents content from overflowing beyond the chatbot window
         }}
       >
         <Box p={2} display="flex" flexDirection="column" height="100%">
@@ -129,7 +127,7 @@ const ChatbotWrapper = ({ token }) => {
               flexGrow: 1,
               overflowY: "auto",
               display: "flex",
-              flexDirection: "column", // Fixed: normal order of messages
+              flexDirection: "column", // Normal order of messages
               gap: 1,
             }}
           >
@@ -145,56 +143,67 @@ const ChatbotWrapper = ({ token }) => {
                 <Box
                   sx={{
                     maxWidth: "80%",
-                    padding: 1,
-                    borderRadius: 8,
+                    padding: 1.5, // Increased padding for a more spacious look
+                    borderRadius: 12, // Increased border radius for a modern feel
                     backgroundColor:
                       chat.type === "user" ? "#007bff" : "#f1f1f1",
                     color: chat.type === "user" ? "white" : "black",
                     wordWrap: "break-word",
+                    boxShadow: 2, // Adding subtle shadow for better contrast
                   }}
                 >
                   {chat.message}
                 </Box>
               </Box>
             ))}
+
+            {/* Show the animated typing dots only if the bot is typing */}
+            {isLoadingResponse && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                gap={1}
+                sx={{
+                  position: "absolute",
+                  bottom: 20, // Position the dots towards the bottom of the chatbox
+                  width: "100%", // Take full width
+                  left: 0,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: "#007bff",
+                    animation: "typing-dot 1.5s infinite",
+                  }}
+                />
+                <Box
+                  sx={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: "#007bff",
+                    animation: "typing-dot 1.5s infinite 0.2s",
+                  }}
+                />
+                <Box
+                  sx={{
+                    width: "8px",
+                    height: "8px",
+                    borderRadius: "50%",
+                    backgroundColor: "#007bff",
+                    animation: "typing-dot 1.5s infinite 0.4s",
+                  }}
+                />
+              </Box>
+            )}
           </Box>
 
-          {isLoadingResponse ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              gap={1}
-            >
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: "#007bff",
-                  animation: "typing 1s infinite",
-                }}
-              />
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: "#007bff",
-                  animation: "typing 1s infinite 0.2s",
-                }}
-              />
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: "#007bff",
-                  animation: "typing 1s infinite 0.4s",
-                }}
-              />
-            </Box>
-          ) : (
+          {/* Only show the text input if there's no typing indicator */}
+          {!isLoadingResponse && (
             <Box component="form" onSubmit={(e) => e.preventDefault()}>
               <TextField
                 fullWidth
@@ -204,7 +213,16 @@ const ChatbotWrapper = ({ token }) => {
                 onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
                 sx={{
                   marginBottom: 2,
-                  borderRadius: 20, // Added border radius to text field
+                  borderRadius: "20px", // Ensure rounded corners for the input field
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "20px",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#007bff",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#0056b3",
+                  },
                 }}
                 placeholder="Type a message..."
               />
@@ -237,6 +255,26 @@ const ChatbotWrapper = ({ token }) => {
       >
         💬
       </Button>
+
+      {/* Add Typing Dot Animation using sx prop */}
+      <style>
+        {`
+          @keyframes typing-dot {
+            0% {
+              opacity: 0;
+              transform: scale(0);
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1);
+            }
+            100% {
+              opacity: 0;
+              transform: scale(0);
+            }
+          }
+        `}
+      </style>
     </Box>
   );
 };
