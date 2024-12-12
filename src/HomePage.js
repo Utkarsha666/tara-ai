@@ -127,16 +127,13 @@ const HomePage = () => {
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-          Driving Impactful Change with AI for a Sustainable Nepal
+            Welcome to TARA – Your AI-Powered Project Management Solution{" "}
           </Typography>
           <Typography variant="body1" sx={{ marginTop: 1 }}>
-            Tara is an AI-powered platform that drives impactful projects and
-            sustainable development in Nepal. By leveraging the latest trends
-            and data, it helps NGOs, community organizations, and individuals
-            address climate, social, and development challenges. Tara features a
-            dashboard, collaboration tools, project management, monitoring and
-            evaluation, tracking progress, team management, resource hub,
-            chatbot, and tools to generate actionable recommendations.
+            TARA is an all-in-one platform designed to supercharge your project
+            management and decision-making. With its AI-driven tools, you can
+            manage projects, collaborate seamlessly, track performance, and make
+            smarter decisions—faster.
           </Typography>
         </Box>
 
@@ -149,11 +146,11 @@ const HomePage = () => {
             text={
               <>
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  Tara: AI-Powered Advocate for Social Change,{" "}
+                  TARA’s AI-powered Research Assistant,{" "}
                 </Typography>
-                analyzes latest trends and integrates human feedback to deliver
-                actionable solutions that shape policy, enhance impact, and
-                drive sustainable progress.
+                provides actionable recommendations based on current trends and
+                insights. It helps you stay informed and generate customized
+                reports to maximize impact and drive effective outcomes.
               </>
             }
             imageFirst={true}
@@ -165,15 +162,16 @@ const HomePage = () => {
             title="Data-Driven Insights"
             text={
               <>
-                Users can seamlessly explore data, ask questions, and access
-                essential documents through an{" "}
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  interactive dashboard
+                  The Chatbot Assistance
                 </Typography>{" "}
-                and a{" "}
-                <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  Q&A chatbot
-                </Typography>
+                quickly answers your questions by accessing an up-to-date
+                knowledge base. Users can easily manage content by adding or
+                removing documents to keep information accurate and accessible.
+                <Typography
+                  component="span"
+                  sx={{ fontWeight: "bold" }}
+                ></Typography>
               </>
             }
             imageFirst={false}
@@ -186,12 +184,12 @@ const HomePage = () => {
             text={
               <>
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  Join our Collaboration Hub
-                </Typography>
-                , where civil society, activists, policymakers, and leaders
-                collaborate on sustainable climate solutions. Form teams, share
-                insights, track projects, and access programs and events, all in
-                one place, driving collective action.
+                  The TARA Collaboration Hub
+                </Typography>{" "}
+                is a platform for seamless communication and collaboration. Form
+                teams, join channels, share updates, and engage in discussions,
+                all in one place, to drive collective action and work towards
+                sustainable solutions.
               </>
             }
             imageFirst={true}
@@ -203,13 +201,13 @@ const HomePage = () => {
             title="Impact Dashboard for Climate Action"
             text={
               <>
+                TARA streamlines{" "}
                 <Typography component="span" sx={{ fontWeight: "bold" }}>
-                  Monitor and evaluate{" "}
+                  project management and M&E{" "}
                 </Typography>
-                projects, timelines, activities, and team progress in real-time.
-                Generate comprehensive impact reports highlighting successes and
-                challenges, providing donors with transparent insights into
-                their contributions.
+                with easy-to-use project cards, real-time tracking, and
+                automated impact reporting. Stay aligned and make data-driven
+                decisions with transparent insights throughout the project.
               </>
             }
             imageFirst={false}
