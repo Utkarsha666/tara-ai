@@ -68,7 +68,7 @@ const ChatbotWrapper = ({ token, username }) => {
         ...prevHistory,
         {
           type: "bot",
-          message: "Hello 👋, How can I assist you? 🇳🇵.",
+          message: "Hello 👋, How can I assist you?",
         },
       ]);
       setHasGreeted(true);
@@ -103,6 +103,45 @@ const ChatbotWrapper = ({ token, username }) => {
     };
   }, [isChatOpen]);
 
+  // Helper function to format markdown and handle newlines, bold, and lists
+  const formatMessage = (message) => {
+    // Handle emojis by ensuring they're displayed correctly
+    let formattedMessage = message;
+
+    // Convert markdown-style bold (**text**) to <strong> tags
+    formattedMessage = formattedMessage.replace(
+      /\*\*(.*?)\*\*/g,
+      "<strong>$1</strong>"
+    );
+
+    // Convert markdown-style italics (*text*) to <em> tags
+    formattedMessage = formattedMessage.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+    // Convert newline characters to <br /> for line breaks
+    formattedMessage = formattedMessage.replace(/\n/g, "<br />");
+
+    // Handle tab characters (\t) by replacing with spaces (for formatting purposes)
+    formattedMessage = formattedMessage.replace(
+      /\t/g,
+      "&nbsp;&nbsp;&nbsp;&nbsp;"
+    );
+
+    // Convert markdown-style bullet points (* text) to <ul><li> tags
+    formattedMessage = formattedMessage.replace(
+      /^\s*\*\s(.*?)$/gm,
+      "<ul><li>$1</li></ul>"
+    );
+
+    // Convert numbered lists (1. text) to <ol><li> tags
+    formattedMessage = formattedMessage.replace(
+      /^(\d+)\.\s(.*?)$/gm,
+      "<ol><li>$2</li></ol>"
+    );
+
+    // Return the formatted message, allowing HTML rendering
+    return formattedMessage;
+  };
+
   return (
     <Box position="relative">
       <Box
@@ -133,7 +172,7 @@ const ChatbotWrapper = ({ token, username }) => {
               flexGrow: 1,
               overflowY: "auto",
               display: "flex",
-              flexDirection: "column", // Normal order of messages
+              flexDirection: "column",
               gap: 1,
             }}
           >
@@ -149,16 +188,20 @@ const ChatbotWrapper = ({ token, username }) => {
                 <Box
                   sx={{
                     maxWidth: "80%",
-                    padding: 1.5, // Increased padding for a more spacious look
-                    borderRadius: 12, // Increased border radius for a modern feel
+                    padding: 1.5,
+                    borderRadius: 12,
                     backgroundColor:
                       chat.type === "user" ? "#007bff" : "#f1f1f1",
                     color: chat.type === "user" ? "white" : "black",
                     wordWrap: "break-word",
-                    boxShadow: 2, // Adding subtle shadow for better contrast
+                    boxShadow: 4,
                   }}
                 >
-                  {chat.message}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: formatMessage(chat.message),
+                    }}
+                  />
                 </Box>
               </Box>
             ))}
@@ -172,8 +215,8 @@ const ChatbotWrapper = ({ token, username }) => {
                 gap={1}
                 sx={{
                   position: "absolute",
-                  bottom: 20, // Position the dots towards the bottom of the chatbox
-                  width: "100%", // Take full width
+                  bottom: 20,
+                  width: "100%",
                   left: 0,
                 }}
               >
@@ -219,7 +262,7 @@ const ChatbotWrapper = ({ token, username }) => {
                 onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
                 sx={{
                   marginBottom: 2,
-                  borderRadius: "20px", // Ensure rounded corners for the input field
+                  borderRadius: "20px",
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "20px",
                   },
