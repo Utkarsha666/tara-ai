@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { fetchChatbotResponse } from "../../utils/api/DashboardAPI";
 
-const ChatbotWrapper = ({ token }) => {
+const ChatbotWrapper = ({ token, username }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [userInput, setUserInput] = useState("");
@@ -68,13 +68,19 @@ const ChatbotWrapper = ({ token }) => {
         ...prevHistory,
         {
           type: "bot",
-          message:
-            "Hello 🌍, Currently my knowledge is limited to only Climate Change 🌱 and Gender Inequality 🚺 in Nepal 🇳🇵.",
+          message: "Hello 👋, How can I assist you? 🇳🇵.",
         },
       ]);
       setHasGreeted(true);
     }
   }, [isChatOpen, hasGreeted]);
+
+  // Clear chat history if the token is empty (i.e., user logs out)
+  useEffect(() => {
+    if (!token || token.length === 0) {
+      setChatHistory([]); // Clear the chat history if the user logs out
+    }
+  }, [token]);
 
   // Handle click outside to minimize the chatbot
   useEffect(() => {
