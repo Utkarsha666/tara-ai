@@ -36,8 +36,9 @@ const ReportForm = ({
   loadingReportGeneration,
   loadingReports,
 }) => {
-  const handleTopicChange = (e, newValue) => {
-    setTopic(newValue);
+  // Ensure topic updates correctly on selection or custom text input
+  const handleInputChange = (event, newInputValue) => {
+    setTopic(newInputValue); // Directly set the new value
   };
 
   return (
@@ -72,10 +73,11 @@ const ReportForm = ({
 
       {/* Predefined Topics Dropdown */}
       <Autocomplete
-        value={topic}
-        onChange={handleTopicChange}
-        options={suggestedTopics}
-        freeSolo
+        value={topic} // Bind to parent state
+        onChange={(event, newValue) => setTopic(newValue)} // When a predefined option is selected
+        onInputChange={handleInputChange} // When user types in custom text
+        options={suggestedTopics || []} // Ensure options is defined
+        freeSolo // Allow custom text input
         renderInput={(params) => (
           <TextField
             {...params}
