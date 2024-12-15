@@ -26,9 +26,7 @@ const Report = () => {
   const [loadingReports, setLoadingReports] = useState(false);
   const [loadingReportGeneration, setLoadingReportGeneration] = useState(false);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
-  const [topic, setTopic] = useState(
-    "Wind and Solar Energy Solutions for Rural and Remote Areas"
-  );
+  const [topic, setTopic] = useState("");
   const [maxAnalysts, setMaxAnalysts] = useState(3);
   const [feedback, setFeedback] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,10 +118,6 @@ const Report = () => {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" gutterBottom>
-        AI-Powered Research Assistant
-      </Typography>
-
       <ReportForm
         topic={topic}
         setTopic={setTopic}
@@ -143,9 +137,21 @@ const Report = () => {
         </Box>
       )}
 
-      <Typography variant="h5" gutterBottom>
-        Past Generated Reports
-      </Typography>
+      <Box
+        sx={{
+          marginTop: 4,
+          position: "relative",
+          boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
+          borderRadius: 8,
+          padding: 2,
+          maxHeight: 400,
+          overflowY: "auto",
+        }}
+      >
+        <Typography variant="h5" gutterBottom>
+          Past Generated Reports
+        </Typography>
+      </Box>
 
       <Box
         sx={{

@@ -111,7 +111,11 @@ const FileUploadDialog = ({
         {/* Show Circular Loading if in loading state */}
         {loading && (
           <Box sx={{ marginTop: 2, textAlign: "center" }}>
-            <CircularLoading message="Uploading..." size={50} color="primary" />
+            <CircularLoading
+              message="Uploading and Updating Knowledge"
+              size={50}
+              color="primary"
+            />
           </Box>
         )}
       </DialogContent>
